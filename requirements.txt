@@ -1,0 +1,35 @@
+# Bleeding edge Django
+Django>=1.8
+
+# Configuration
+django-environ==0.4.3
+whitenoise==3.3.0
+
+# Forms
+django-braces==1.11.0
+django-crispy-forms==1.6.1
+
+# Models
+django-model-utils==3.0.0
+
+# Images
+Pillow==4.2.1
+
+# For user registration, either via email or social
+# Well-built with regular release cycles!
+django-allauth==0.32.0
+
+# Python-PostgreSQL Database Adapter
+psycopg2==2.7.1
+
+# Unicode slugification
+awesome-slugify==1.6.5
+
+# Time zones support
+pytz==2017.2
+
+# improved REPL
+ipython==5.4.1 #
+ipdb==0.10.3
+
+django-extensions==1.8.1
