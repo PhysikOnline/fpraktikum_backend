@@ -25,13 +25,8 @@ class FpRegistration(models.Model):
         return _("fp registration")
 
 
-class Course(models.Model):
+class FpCourseFirstHalf(models.Model):
     GRADUATION_CHOICES = (("BA", "Bachelor"), ("MA", "Master"), ("L", "Lehramt"))
-
-    registration = models.ForeignKey(FpRegistration,
-                                      verbose_name=_("semester half"),
-                                      related_name="courses",
-                                      null=True)
 
     name = models.CharField(verbose_name=_("course name"),
                             max_length=100)
@@ -42,15 +37,80 @@ class Course(models.Model):
     graduation = models.CharField(max_length=2,
                                   choices=GRADUATION_CHOICES,
                                   blank=True)
-    semester_half= models.IntegerField(verbose_name=_("semester half"),
-                                       choices=((1, 1), (2, 2)),
-                                       null=True)
+    registration = models.ForeignKey(FpRegistration,
+                                     verbose_name=_("semester half"),
+                                     related_name="courses_first",
+                                     null=True)
+
     class Meta:
-        verbose_name = _("course")
-        verbose_name_plural = _("courses")
+        verbose_name = _("course for first semesterhalf")
+        verbose_name_plural = _("courses for first semesterhalf")
 
     def __unicode__(self):
         return self.name
+
+
+class FpCourseSecondHalf(models.Model):
+    GRADUATION_CHOICES = (("BA", "Bachelor"), ("MA", "Master"), ("L", "Lehramt"))
+
+    name = models.CharField(verbose_name=_("course name"),
+                            max_length=100)
+
+    places = models.IntegerField(verbose_name=_("places"),
+                                 blank=True,
+                                 null=True)
+    graduation = models.CharField(max_length=2,
+                                  choices=GRADUATION_CHOICES,
+                                  blank=True)
+    registration = models.ForeignKey(FpRegistration,
+                                     verbose_name=_("semester half"),
+                                     related_name="courses_second",
+                                     null=True)
+
+    class Meta:
+        verbose_name = _("course for second semesterhalf")
+        verbose_name_plural = _("courses for second semesterhalf")
+
+    def __unicode__(self):
+        return self.name
+
+
+class FpUserRegistration(models.Model):
+
+    user_name = models.CharField(max_length=100,
+                                 verbose_name=_("user name"),
+                                 null=True,
+                                 blank=True)
+    user_email = models.EmailField(verbose_name=_("user email"),
+                                   null=True, blank=True)
+    course_first_half = models.ForeignKey(FpCourseFirstHalf,
+                                          verbose_name=_("course first semesterhalf"),
+                                          null=True,
+                                          blank=True)
+    course_second_half = models.ForeignKey(FpCourseSecondHalf,
+                                           verbose_name=_("course second semesterhalf"),
+                                           null=True,
+                                           blank=True)
+    partner = models.OneToOneField('self', unique=True, related_name="registrant_user", null=True, blank=True)
+
+    class Meta:
+        verbose_name = _("registration")
+        verbose_name_plural = _("registrations")
+
+    def __unicode__(self):
+        return self.user_name
+
+
+class FpWaitlist(models.Model):
+
+    user_name = models.CharField(max_length=100,
+                                 verbose_name=_("user name"),
+                                 null=True)
+    user_email = models.EmailField(verbose_name=_("user email"),
+                                   null=True)
+    # wish_course_1 = ''
+    #
+    # wish_course_2 = ''
 
 
 
