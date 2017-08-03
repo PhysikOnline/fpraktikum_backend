@@ -3,49 +3,49 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 
-from .models import FpRegistration, FpCourseFirstHalf, FpCourseSecondHalf, FpUserRegistration, FpWaitlist
+from .models import FpRegistration, FpUserRegistrant, FpUserPartner, FpWaitlist, FpInstitute
 
 
-class CourseFirstHalfAdmin(admin.ModelAdmin):
+class FpInstituteAdmin(admin.ModelAdmin):
 
-    list_display = [f.name for f in FpCourseFirstHalf._meta.get_fields()]
+    list_display = ['name', 'places', 'graduation', 'get_registration', 'semester_half']
 
-admin.site.register(FpCourseFirstHalf, CourseFirstHalfAdmin)
+    def get_registration(self, obj):
+        return obj.registration.semester
 
-
-class CourseSecondHalfAdmin(admin.ModelAdmin):
-
-    list_display = [f.name for f in FpCourseSecondHalf._meta.get_fields()]
-
-admin.site.register(FpCourseSecondHalf, CourseSecondHalfAdmin)
+admin.site.register(FpInstitute, FpInstituteAdmin)
 
 
-class FpCourseFirstHalfInline(admin.TabularInline):
-    model = FpCourseFirstHalf
+class FpInstituteInline(admin.TabularInline):
+    model = FpInstitute
 
 
-class FpCourseSecondHalfInline(admin.TabularInline):
-    model = FpCourseSecondHalf
+class FpUserPartnerAdmin(admin.ModelAdmin):
+
+    list_display = [f.name for f in FpUserPartner._meta.get_fields()]
+
+admin.site.register(FpUserPartner, FpUserPartnerAdmin)
 
 
 class FpRegistrationAdmin(admin.ModelAdmin):
 
-    list_display = [f.name for f in FpRegistration._meta.get_fields()]
+    list_display = ['semester', 'start_date', 'end_date']
     inlines = [
-        FpCourseFirstHalfInline,
-        FpCourseSecondHalfInline
+        FpInstituteInline,
     ]
+
 admin.site.register(FpRegistration, FpRegistrationAdmin)
 
 
-class FpUserRegistrationAdmin(admin.ModelAdmin):
+class FpUserRegistrantAdmin(admin.ModelAdmin):
 
-    list_display = [f.name for f in FpUserRegistration._meta.get_fields()]
+    list_display = [f.name for f in FpUserRegistrant._meta.get_fields()]
 
-admin.site.register(FpUserRegistration,FpUserRegistrationAdmin)
+admin.site.register(FpUserRegistrant, FpUserRegistrantAdmin)
 
 
 class FpWaitlistAdmin(admin.ModelAdmin):
+
     list_display = [f.name for f in FpWaitlist._meta.get_fields()]
 
-admin.site.register(FpWaitlist,FpWaitlistAdmin)
+admin.site.register(FpWaitlist, FpWaitlistAdmin)

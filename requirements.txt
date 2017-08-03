@@ -33,3 +33,12 @@ ipython==5.4.1 #
 ipdb==0.10.3
 
 django-extensions==1.8.1
+
+# Django REST framework
+djangorestframework==3.6.3
+markdown==2.6.8
+django-filter==1.0.4
+
+# Documentation of REST-Framework
+coreapi==2.3.1
+pygments==2.2.0

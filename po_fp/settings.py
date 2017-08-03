@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'fpraktikum',
     'django_extensions',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -74,7 +75,6 @@ TEMPLATES = [
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.load_template_source',
     'django.template.loaders.app_directories.load_template_source',
-#     'django.template.loaders.eggs.load_template_source',
 )
 
 
@@ -133,3 +133,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES':
+    ['rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'],
+    'DEFAULT_RENDERER_CLASSES':
+    ('rest_framework.renderers.JSONRenderer',
+     'rest_framework.renderers.BrowsableAPIRenderer', ),
+    'TEST_REQUEST_DEFAULT_FORMAT':
+    'json',
+}
+
