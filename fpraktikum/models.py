@@ -17,7 +17,6 @@ class FpRegistration(models.Model):
                                       null=True)
     end_date = models.DateTimeField(verbose_name=_("enddate of registration"),
                                     null=True)
-    notes = models.
 
     class Meta:
         verbose_name = _("FP registration")
@@ -82,11 +81,10 @@ class FpUserPartner(models.Model):
                                     null=True,
                                     blank=True
                                     )
-    institutes = models.ForeignKey(FpInstitute,
-                                   verbose_name=_("institutes"),
-                                   null=True,
-                                   blank=True
-                                   )
+    institutes = models.ManyToManyField(FpInstitute,
+                                        verbose_name=_("institutes"),
+                                        blank=True
+                                        )
 
     class Meta:
         verbose_name = _("User/Partner")
@@ -111,11 +109,10 @@ class FpUserRegistrant(models.Model):
                                     null=True,
                                     blank=True
                                     )
-    institutes = models.ForeignKey(FpInstitute,
-                                   verbose_name=_("institutes"),
-                                   null=True,
-                                   blank=True
-                                   )
+    institutes = models.ManyToManyField(FpInstitute,
+                                        verbose_name=_("institutes"),
+                                        blank=True
+                                        )
     partner = models.OneToOneField(FpUserPartner,
                                    verbose_name=_("partner"),
                                    related_name="registrant",

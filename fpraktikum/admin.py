@@ -21,8 +21,10 @@ class FpInstituteInline(admin.TabularInline):
 
 
 class FpUserPartnerAdmin(admin.ModelAdmin):
+    list_display = ("user_name", "user_email", "user_snumber", "get_institutes", "registrant")
 
-    list_display = [f.name for f in FpUserPartner._meta.get_fields()]
+    def get_institutes(self, obj):
+        return "\n".join([p.name for p in obj.institutes.all()])
 
 admin.site.register(FpUserPartner, FpUserPartnerAdmin)
 
@@ -39,7 +41,10 @@ admin.site.register(FpRegistration, FpRegistrationAdmin)
 
 class FpUserRegistrantAdmin(admin.ModelAdmin):
 
-    list_display = [f.name for f in FpUserRegistrant._meta.get_fields()]
+    list_display = ("user_name", "user_email", "user_snumber", "get_institutes", "partner")
+
+    def get_institutes(self, obj):
+        return "\n".join([p.name for p in obj.institutes.all()])
 
 admin.site.register(FpUserRegistrant, FpUserRegistrantAdmin)
 
