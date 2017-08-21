@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import environ
+import re
 
 ROOT_DIR = environ.Path(
     __file__) - 2  # ==>( po-fp-django/po_fp/settings.py - 2 = po-fp-django/)
