@@ -27,12 +27,13 @@ PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '55$vbbbgy8kyw=^=w45%s))24*#0_^y8p4ngp*mxf&snnr1v&7'
+SECRET_KEY = environ.get("SECRET_KEY", 'secret')
+#'55$vbbbgy8kyw=^=w45%s))24*#0_^y8p4ngp*mxf&snnr1v&7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True if environ.get("NODEBUG") is None else False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['web', 'localhost'] if environ.get("NODEBUG") is None else [".physikelearning.de"]
 
 
 # Application definition
@@ -88,16 +89,38 @@ WSGI_APPLICATION = 'po_fp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'HOST': 'db',
-        'PASSWORD': 'password',
-        'PORT': 5432,
+if environ.get("IN_DOCKER"):
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'postgres',
+            'USER': 'postgres',
+            'HOST': 'db',
+            'PASSWORD': 'password',
+            'PORT': 5432,
+        }
     }
-}
+
+elif environ.get("DATABASE_URL"):
+
+    USER, PASSWORD, HOST, PORT, NAME = re.match("^postgres://(?P<username>.*?)\:(?P<password>.*?)\@(?P<host>.*?)\:(?<port>\d+)\/(?P<db>.*?)$", environ.get("DATABASE_URL", "")).groups()
+
+    DATABASES = {
+        'default':{
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': NAME,
+            'USER': USER,
+            'PASSWORD': PASSWORD,
+            'HOST': HOST,
+            'PORT': int(PORT),
+        }
+    }
+else:
+    pass
+
+
+
 
 
 # Password validation

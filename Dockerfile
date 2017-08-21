@@ -9,17 +9,17 @@ ENV PYTHONUNBUFFERED 1
 RUN apt-get update
 RUN apt-get install -y swig libssl-dev dpkg-dev netcat
 
-# Copy all our files into the image.
-RUN mkdir /code
+# Install all requirements
+RUN pip install -U pip
+ADD requirements.txt /code/
+RUN pip install -Ur /code/requirements.txt
+
+# Add the Dokku specific files to their locations
+ADD misc/dokku/CHECKS /app/
+ADD misc/dokku/* /code/
+
+# Copy all our files into the image and collect staticfiles
 WORKDIR /code
 COPY . /code/
-
-# Install our requirements.
-RUN pip install -U pip
-RUN pip install -Ur requirements.txt
-
-# Collect our static media.
 RUN python /code/manage.py collectstatic --noinput
 
-# Specify the command to run when the image is run.
-CMD ["/code/misc/tooling/prod_run.sh"]
