@@ -27,13 +27,13 @@ PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = environ.get("SECRET_KEY", 'secret')
+SECRET_KEY = os.environ.get("SECRET_KEY", 'secret')
 #'55$vbbbgy8kyw=^=w45%s))24*#0_^y8p4ngp*mxf&snnr1v&7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True if environ.get("NODEBUG") is None else False
+DEBUG = True if os.environ.get("NODEBUG") is None else False
 
-ALLOWED_HOSTS = ['web', 'localhost'] if environ.get("NODEBUG") is None else [".physikelearning.de"]
+ALLOWED_HOSTS = ['web', 'localhost'] if os.environ.get("NODEBUG") is None else [".physikelearning.de"]
 
 
 # Application definition
@@ -89,7 +89,7 @@ WSGI_APPLICATION = 'po_fp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-if environ.get("IN_DOCKER"):
+if os.environ.get("IN_DOCKER"):
 
     DATABASES = {
         'default': {
@@ -102,7 +102,7 @@ if environ.get("IN_DOCKER"):
         }
     }
 
-elif environ.get("DATABASE_URL"):
+elif os.environ.get("DATABASE_URL"):
 
     USER, PASSWORD, HOST, PORT, NAME = re.match("^postgres://(?P<username>.*?)\:(?P<password>.*?)\@(?P<host>.*?)\:(?<port>\d+)\/(?P<db>.*?)$", environ.get("DATABASE_URL", "")).groups()
 
