@@ -105,7 +105,7 @@ if os.environ.get("IN_DOCKER"):
 
 elif os.environ.get("DATABASE_URL"):
 
-    USER, PASSWORD, HOST, PORT, NAME = re.match("^postgres://(?P<username>.*?)\:(?P<password>.*?)\@(?P<host>.*?)\:(?<port>\d+)\/(?P<db>.*?)$", environ.get("DATABASE_URL", "")).groups()
+    USER, PASSWORD, HOST, PORT, NAME = re.match("^postgres://(?P<username>.*?)\:(?P<password>.*?)\@(?P<host>.*?)\:(?<port>\d+)\/(?P<db>.*?)$", os.environ.get("DATABASE_URL", "")).groups()
 
     DATABASES = {
         'default':{
