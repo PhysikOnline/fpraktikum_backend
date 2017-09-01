@@ -80,10 +80,10 @@ TEMPLATES = [
     },
 ]
 
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.load_template_source',
-    'django.template.loaders.app_directories.load_template_source',
-)
+# TEMPLATE_LOADERS = (
+#     'django.template.loaders.filesystem.load_template_source',
+#     'django.template.loaders.app_directories.load_template_source',
+# )
 
 WSGI_APPLICATION = 'po_fp.wsgi.application'
 
