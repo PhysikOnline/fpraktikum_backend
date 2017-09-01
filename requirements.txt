@@ -1,5 +1,6 @@
 # Bleeding edge Django
 Django>=1.8
+gunicorn>=19.7
 
 # Configuration
 django-environ==0.4.3
