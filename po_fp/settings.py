@@ -20,9 +20,10 @@ ROOT_DIR = environ.Path(
 APPS_DIR = ROOT_DIR.path('fpraktikum')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#
+# PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
 
-PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -59,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware'
 
 ]
 
@@ -158,12 +160,12 @@ USE_TZ = True
 
 # STATIC FILE CONFIGURATION
 # ------------------------------------------------------------------------------
-STATIC_URL = '/staticfiles/'
+STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'fpraktikum/static'),
+    str(APPS_DIR.path('static')),
 )
-STATIC_ROOT = 'staticfiles'
+STATIC_ROOT = str(ROOT_DIR('staticfiles'))
 
 # # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-root
 # STATIC_ROOT = ''
@@ -178,6 +180,8 @@ STATIC_ROOT = 'staticfiles'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder', )
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # MEDIA CONFIGURATION
 # ------------------------------------------------------------------------------
