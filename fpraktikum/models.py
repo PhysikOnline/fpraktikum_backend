@@ -68,11 +68,18 @@ class FpInstitute(models.Model):
 
 class FpUserPartner(models.Model):
 
-    user_name = models.CharField(max_length=100,
-                                 verbose_name=_("user name"),
-                                 null=True,
-                                 blank=True
-                                 )
+    user_firstname = models.CharField(max_length=100,
+                                      verbose_name=_("user firstname"),
+                                      null=True,
+                                      blank=True
+                                      )
+    user_lastname = models.CharField(max_length=100,
+                                     verbose_name=_("user lastname"),
+                                     null=True,
+                                     blank=True
+                                     )
+    has_accepted = models.BooleanField(default=False,
+                                       verbose_name=_("Partner has accepted"))
     user_email = models.EmailField(verbose_name=_("user email"),
                                    null=True, blank=True
                                    )
@@ -95,12 +102,18 @@ class FpUserPartner(models.Model):
 
 
 class FpUserRegistrant(models.Model):
-
-    user_name = models.CharField(max_length=100,
-                                 verbose_name=_("user name"),
-                                 null=True,
-                                 blank=True
-                                 )
+    user_firstname = models.CharField(max_length=100,
+                                      verbose_name=_("user firstname"),
+                                      null=True,
+                                      blank=True
+                                      )
+    user_lastname = models.CharField(max_length=100,
+                                     verbose_name=_("user lastname"),
+                                     null=True,
+                                     blank=True
+                                     )
+    partner_has_accepted = models.BooleanField(default=False,
+                                       verbose_name=_("Partner has accepted"))
     user_email = models.EmailField(verbose_name=_("user email"),
                                    null=True, blank=True
                                    )
