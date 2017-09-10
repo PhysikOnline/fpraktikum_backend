@@ -96,14 +96,23 @@ if os.environ.get("IN_DOCKER"):
 
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'postgres',
-            'USER': 'postgres',
-            'HOST': 'db',
-            'PASSWORD': 'password',
-            'PORT': 5432,
-        }
+           'ENGINE': 'django.db.backends.postgresql_psycopg2',
+           'NAME': 'postgres',
+           'USER': 'postgres',
+           'HOST': 'db',
+           'PASSWORD': 'password',
+           'PORT': 5432,
+        },
+        'ilias_db':{
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': str(os.environ.get("ILIAS_DB_NAME")),
+            'USER': str(os.environ.get("ILIAS_DB_USER")),
+            'PASSWORD': str(os.environ.get("ILIAS_DB_PASS")),
+            'HOST': str(os.environ.get("ILIAS_DB_HOST")),
+            'PORT': int(os.environ.get("ILIAS_DB_PORT")),
+        },
     }
+
 
 elif os.environ.get("DATABASE_URL"):
 
@@ -117,7 +126,15 @@ elif os.environ.get("DATABASE_URL"):
             'PASSWORD': PASSWORD,
             'HOST': HOST,
             'PORT': int(PORT),
-        }
+        },
+        'ilias_db':{
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': str(os.environ.get("ILIAS_DB_NAME")),
+            'USER': str(os.environ.get("ILIAS_DB_USER")),
+            'PASSWORD': str(os.environ.get("ILIAS_DB_PASS")),
+            'HOST': str(os.environ.get("ILIAS_DB_HOST")),
+            'PORT': int(os.environ.get("ILIAS_DB_PORT")),
+        },
     }
 else:
     pass

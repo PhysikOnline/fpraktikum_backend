@@ -20,6 +20,11 @@ services:
       - db
     environment:
       IN_DOCKER: 1
+      ILIAS_DB_NAME: "${ILIAS_DB_NAME}"
+      ILIAS_DB_USER: "${ILIAS_DB_USER}"
+      ILIAS_DB_PASS: "${ILIAS_DB_PASS}"
+      ILIAS_DB_HOST: "${ILIAS_DB_HOST}"
+      ILIAS_DB_PORT: "${ILIAS_DB_PORT}"
     ports:
      - "8000:8000"
 
