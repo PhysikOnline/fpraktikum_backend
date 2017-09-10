@@ -11,6 +11,12 @@ services:
 
   web:
     # Docker hack to wait until Postgres is up, then run stuff.
+    environment:
+      ILIAS_DB_NAME="${ILIAS_DB_NAME}"
+      ILIAS_DB_USER="${ILIAS_DB_USER}"
+      ILIAS_DB_PASS="${ILIAS_DB_PASS}"
+      ILIAS_DB_HOST="${ILIAS_DB_HOST}"
+      ILIAS_DB_PORT="${ILIAS_DB_PORT}"
     command: bash -c "while ! nc -w 1 -z db 5432; do sleep 0.1; done; python manage.py migrate; while :; do python manage.py runserver 0.0.0.0:8000; sleep 1; done"
     image: django
     build: .
