@@ -105,11 +105,11 @@ if os.environ.get("IN_DOCKER"):
         },
         'ilias_db':{
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.environ.get("ILIAS_DB_NAME"),
-            'USER': os.environ.get("ILIAS_DB_USER"),
-            'PASSWORD': os.environ.get("ILIAS_DB_PASS"),
-            'HOST': os.environ.get("ILIAS_DB_HOST"),
-            'PORT': os.environ.get("ILIAS_DB_PORT"),
+            'NAME': str(os.environ.get("ILIAS_DB_NAME")),
+            'USER': str(os.environ.get("ILIAS_DB_USER")),
+            'PASSWORD': str(os.environ.get("ILIAS_DB_PASS")),
+            'HOST': str(os.environ.get("ILIAS_DB_HOST")),
+            'PORT': int(os.environ.get("ILIAS_DB_PORT")),
         },
     }
 
@@ -129,11 +129,11 @@ elif os.environ.get("DATABASE_URL"):
         },
         'ilias_db':{
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.environ.get("ILIAS_DB_NAME"),
-            'USER': os.environ.get("ILIAS_DB_USER"),
-            'PASSWORD': os.environ.get("ILIAS_DB_PASS"),
-            'HOST': os.environ.get("ILIAS_DB_HOST"),
-            'PORT': os.environ.get("ILIAS_DB_PORT"),
+            'NAME': str(os.environ.get("ILIAS_DB_NAME")),
+            'USER': str(os.environ.get("ILIAS_DB_USER")),
+            'PASSWORD': str(os.environ.get("ILIAS_DB_PASS")),
+            'HOST': str(os.environ.get("ILIAS_DB_HOST")),
+            'PORT': int(os.environ.get("ILIAS_DB_PORT")),
         },
     }
 else:
