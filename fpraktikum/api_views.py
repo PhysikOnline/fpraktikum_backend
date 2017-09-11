@@ -1,7 +1,7 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from .models import *
 from .serializers import *
-from .utils import get_semester
+from fpraktikum.utils import get_semester, il_db_retrieve
 from django.shortcuts import get_object_or_404
 
 from rest_framework.response import Response
@@ -60,4 +60,21 @@ class UserCheckView(generics.RetrieveAPIView):
 
         # filter_kwargs = {self.lookup_field: self.kwargs[lookup_url_kwarg]}
         # obj = get_object_or_404(queryset, **filter_kwargs)
+
+
+class TestIlDbView(generics.RetrieveAPIView):
+    name = 'ilias_db'
+    queryset = FpRegistration.objects.all()
+    serializer_class = FpRegistrationSerializer
+
+    def get(self, request, *args, **kwargs):
+
+        get_params = request.GET
+        result = il_db_retrieve(user_firstname=get_params['user_firstname'], user_lastname=get_params['user_lastname'],
+                                user_login=get_params['user_login'], user_mail=get_params['user_mail'])
+        if result:
+            return Response(data={'data': result}, status=status.HTTP_200_OK)
+
+        else:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
