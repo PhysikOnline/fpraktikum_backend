@@ -78,6 +78,8 @@ class TestIlDbView(generics.RetrieveAPIView):
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+# TODO Think about checking inst_one == inst_two and wether User/Partner is allready registered.
+
 class SetRegistrationView(views.APIView):
     """
     This is the main view for setting a Registration to the Fortgeschrittenen Praktikum.
@@ -180,10 +182,10 @@ class SetRegistrationView(views.APIView):
                                             registrant.save()
                                             registrant.institutes.set([institute_one, institute_two])
                                         except:
-                                            """
-                                            TODO: Over think smth like this to not take away places when an exception
-                                            got thrown.
-                                            """
+
+                                            #TODO: Over think smth like this to not take away places when an exception
+                                            #got thrown.
+
                                             # institute_one.places -= 2
                                             # institute_two.places -= 2
                                             # institute_one.save()
@@ -308,7 +310,7 @@ class SetRegistrationView(views.APIView):
                     except:
                         err_data = {"error": "Die Anmeldung ist fehlgeschlagen"}
                         return Response(data=err_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-                    """TODO: send mail to user and(?) partner"""
+                    #TODO: send mail to user and(?) partner
 
                     # Registration complete
                     return Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -394,6 +396,6 @@ class AcceptDeclinePartnershipView(generics.CreateAPIView):
 
 class CancelRegistrationView():
     pass
-"""TODO: Add a Cancel Registration view
-"""
+#TODO: Add a Cancel Registration view
+
 
