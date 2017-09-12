@@ -66,6 +66,7 @@ class FpInstitute(models.Model):
     def __unicode__(self):
         return self.name
 
+
 class FpUserRegistrant(models.Model):
     user_firstname = models.CharField(max_length=100,
                                       verbose_name=_("user firstname"),
