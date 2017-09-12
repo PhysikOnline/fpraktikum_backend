@@ -2,8 +2,8 @@
 from __future__ import unicode_literals
 
 from django.db import models
-
 from django.utils.translation import ugettext_lazy as _
+
 from .utils import get_semester
 
 
@@ -66,42 +66,6 @@ class FpInstitute(models.Model):
     def __unicode__(self):
         return self.name
 
-
-class FpUserPartner(models.Model):
-
-    user_firstname = models.CharField(max_length=100,
-                                      verbose_name=_("user firstname"),
-                                      null=True,
-                                      blank=True
-                                      )
-    user_lastname = models.CharField(max_length=100,
-                                     verbose_name=_("user lastname"),
-                                     null=True,
-                                     blank=True
-                                     )
-    has_accepted = models.BooleanField(default=False,
-                                       verbose_name=_("Partner has accepted"))
-    user_email = models.EmailField(verbose_name=_("user email"),
-                                   null=True, blank=True
-                                   )
-    user_login = models.CharField(max_length=100,
-                                  verbose_name=_("s number / login"),
-                                  null=True,
-                                  blank=True
-                                 )
-    institutes = models.ManyToManyField(FpInstitute,
-                                        verbose_name=_("institutes"),
-                                        blank=True
-                                        )
-
-    class Meta:
-        verbose_name = _("User/Partner")
-        verbose_name_plural = _("Users/Partners")
-
-    def __unicode__(self):
-        return self.user_name
-
-
 class FpUserRegistrant(models.Model):
     user_firstname = models.CharField(max_length=100,
                                       verbose_name=_("user firstname"),
@@ -127,12 +91,6 @@ class FpUserRegistrant(models.Model):
                                         verbose_name=_("institutes"),
                                         blank=True
                                         )
-    partner = models.OneToOneField(FpUserPartner,
-                                   verbose_name=_("partner"),
-                                   related_name="registrant",
-                                   null=True,
-                                   blank=True
-                                   )
 
     class Meta:
         verbose_name = _("User/Registrant")
@@ -141,6 +99,45 @@ class FpUserRegistrant(models.Model):
     def __unicode__(self):
         return self.user_name
 
+
+class FpUserPartner(models.Model):
+    user_firstname = models.CharField(max_length=100,
+                                      verbose_name=_("user firstname"),
+                                      null=True,
+                                      blank=True
+                                      )
+    user_lastname = models.CharField(max_length=100,
+                                     verbose_name=_("user lastname"),
+                                     null=True,
+                                     blank=True
+                                     )
+    has_accepted = models.BooleanField(default=False,
+                                       verbose_name=_("Partner has accepted"))
+    user_email = models.EmailField(verbose_name=_("user email"),
+                                   null=True, blank=True
+                                   )
+    user_login = models.CharField(max_length=100,
+                                  verbose_name=_("s number / login"),
+                                  null=True,
+                                  blank=True
+                                  )
+    institutes = models.ManyToManyField(FpInstitute,
+                                        verbose_name=_("institutes"),
+                                        blank=True
+                                        )
+    registrant = models.OneToOneField(FpUserRegistrant,
+                                      verbose_name=_("registrant"),
+                                      related_name="partner",
+                                      null=True,
+                                      blank=True
+                                      )
+
+    class Meta:
+        verbose_name = _("User/Partner")
+        verbose_name_plural = _("Users/Partners")
+
+    def __unicode__(self):
+        return self.user_name
 
 class FpWaitlist(models.Model):
 

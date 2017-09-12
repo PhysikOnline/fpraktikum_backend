@@ -1,10 +1,9 @@
-from rest_framework import generics, status
-from .models import *
-from .serializers import *
-from fpraktikum.utils import get_semester, il_db_retrieve
 from django.shortcuts import get_object_or_404
-
+from rest_framework import generics, status
 from rest_framework.response import Response
+
+from fpraktikum.utils import get_semester, il_db_retrieve
+from .serializers import *
 
 
 class RegistrationView(generics.RetrieveAPIView):
@@ -114,7 +113,7 @@ class SetRegistrationView(generics.CreateAPIView):
 
         :param request:
         :param args:
-        :param kwargs: 
+        :param kwargs:
         :return:
         """
         data = request.data
@@ -311,6 +310,75 @@ class SetRegistrationView(generics.CreateAPIView):
         else:
             err_data = {"error": "Die Daten des Registrierenden Users sind nicht vollstaendig."}
             return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AcceptDeclinePartnershipView(generics.CreateAPIView):
+    name = 'accapt_decline'
+    queryset = FpUserPartner.objects.all()
+    serializer_class = FpFullUserPartnerSerializer
+
+    def post(self, request, *args, **kwargs):
+        """
+        Docstring coming soon...
+
+        request.data = {    # partner data
+                        'user_firstname': <str>,
+                        'user_lastname': <str>,
+                        'user_login': <str>,
+                        'user_mail': <str>,
+                        'accept_decline':<boolean> # True for accept , False for decline
+                        }
+
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        data = request.data
+
+        # first check if the data is even provided
+
+        if data['user_firstname'] and data['user_lastname'] and data['user_login'] and data['user_mail']:
+            # ok data is provided
+            # let's check if the user is really a "registered" Partner
+            try:
+                partner_data = FpUserPartner.objects.get(user_firstname=data['user_firstname'],
+                                                         user_lastname=data['user_lastname'],
+                                                         user_login=data['user_login'],
+                                                         user_mail=data['user_mail'])
+            except FpUserPartner.DoesNotExist:
+                err_data = {"error": "Der User ist kein eingetragener Partner."}
+                return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+
+            if data["accept_decline"]:
+                # partner accepts
+                partner_data.has_accepted = True
+                partner_data.registrant.partner_has_accepted = True
+                try:
+                    partner_data.save()
+                    partner_data.registrant.save()
+
+                except:
+                    err_data = {"error": "Der Prozess ist fehlgeschlagen."}
+                    return Response(data=err_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            else:
+                # Partner declines so we delete him
+                try:
+
+                    partner_data.delete()
+
+                except:
+                    err_data = {"error": "Der Prozess ist fehlgeschlagen."}
+                    return Response(data=err_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            return Response(status=status.HTTP_200_OK)
+
+
+
+        else:
+            err_data = {"error": "Die Daten des Users sind nicht vollstaendig."}
+            return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+
 
 """TODO: Add an Accept/Decline partnership View
 """
