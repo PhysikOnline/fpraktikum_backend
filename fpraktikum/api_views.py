@@ -80,11 +80,43 @@ class TestIlDbView(generics.RetrieveAPIView):
 
 
 class SetRegistrationView(generics.CreateAPIView):
+    """
+    This is the main view for setting a Registration to the Fortgeschrittenen Praktikum.
+
+    """
     name = 'set_registration'
     queryset = FpUserRegistrant.objects.all()
     serializer_class = FpFullUserRegistrantSerializer
 
     def post(self, request, *args, **kwargs):
+        """
+        We rewrite the post command since we don't provide serializer like content.
+
+        The request.data dict is expected to look like this :
+
+        request.data = {
+                        'user_firstname': <str>,
+                        'user_lastname': <str>,
+                        'user_login': <str>,
+                        'user_mail': <str>,
+                        'institutes': [{'name':<str>,
+                                        'semesterhalf':<int: 1, 2, 3>
+                                        'graduation':<str: BA, MA, LA>
+                                        },{...}],
+                        'partner': {'user_firstname': <str>,
+                                   'user_lastname': <str>,
+                                   'user_login':<str>,
+                                    'user_mail':<str>,
+                                   },
+                        }
+        In this dict the Institutes key should be a list of at least one or two institutes.
+        Also the partner is optional.
+
+        :param request:
+        :param args:
+        :param kwargs: 
+        :return:
+        """
         data = request.data
         semester = get_semester()
         institute_one = FpInstitute()  # we define an empty class for acces purpose later on
