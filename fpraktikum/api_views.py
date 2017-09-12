@@ -22,7 +22,7 @@ class RegistrationView(generics.RetrieveAPIView):
 
 class UserCheckView(generics.RetrieveAPIView):
     name = 'user'
-    lookup_field = 'user_snumber'
+    lookup_field = 'user_login'
     queryset = FpUserRegistrant.objects.all()
 
     def get(self, request, *args, **kwargs):
@@ -37,9 +37,9 @@ class UserCheckView(generics.RetrieveAPIView):
         # Perform the lookup filtering.
         lookup_field = self.lookup_field
 
-        is_registrant = FpUserRegistrant.objects.filter(user_snumber=self.kwargs[lookup_field],
+        is_registrant = FpUserRegistrant.objects.filter(user_login=self.kwargs[lookup_field],
                                                         institutes__registration__semester=semester)
-        is_partner = FpUserPartner.objects.filter(user_snumber=self.kwargs[lookup_field],
+        is_partner = FpUserPartner.objects.filter(user_login=self.kwargs[lookup_field],
                                                   institutes__registration__semester=semester)
         if is_registrant:
             obj = is_registrant.distinct(lookup_field).get()
@@ -144,7 +144,7 @@ class SetRegistrationView(generics.CreateAPIView):
                                             partner = FpUserPartner(user_firstname=data["partner"]["user_firstname"],
                                                                     user_lastname=data["partner"]["user_firstname"],
                                                                     user_email=data["partner"]["user_mail"],
-                                                                    user_snumber=data["partner"]["user_login"],
+                                                                    user_login=data["partner"]["user_login"],
                                                                     institutes=[institute_one, institute_two])
 
                                             partner.save()
@@ -154,7 +154,7 @@ class SetRegistrationView(generics.CreateAPIView):
                                             registrant = FpUserRegistrant(user_firstname=data["user_firstname"],
                                                                           user_lastname=data["user_firstname"],
                                                                           user_email=data["user_mail"],
-                                                                          user_snumber=data["user_login"],
+                                                                          user_login=data["user_login"],
                                                                           institutes=[institute_one, institute_two],
                                                                           partner=partner)
                                             registrant.save()
@@ -176,7 +176,7 @@ class SetRegistrationView(generics.CreateAPIView):
                                             partner = FpUserPartner(user_firstname=data["partner"]["user_firstname"],
                                                                     user_lastname=data["partner"]["user_firstname"],
                                                                     user_email=data["partner"]["user_mail"],
-                                                                    user_snumber=data["partner"]["user_login"],
+                                                                    user_login=data["partner"]["user_login"],
                                                                     institutes=[institute_one, institute_two])
 
                                             partner.save()
@@ -186,7 +186,7 @@ class SetRegistrationView(generics.CreateAPIView):
                                             registrant = FpUserRegistrant(user_firstname=data["user_firstname"],
                                                                           user_lastname=data["user_firstname"],
                                                                           user_email=data["user_mail"],
-                                                                          user_snumber=data["user_login"],
+                                                                          user_login=data["user_login"],
                                                                           institutes=[institute_one, institute_two],
                                                                           partner=partner)
                                             registrant.save()
@@ -220,7 +220,7 @@ class SetRegistrationView(generics.CreateAPIView):
                                     registrant = FpUserRegistrant(user_firstname=data["user_firstname"],
                                                                   user_lastname=data["user_firstname"],
                                                                   user_email=data["user_mail"],
-                                                                  user_snumber=data["user_login"],
+                                                                  user_login=data["user_login"],
                                                                   institutes=[institute_one, institute_two])
                                     registrant.save()
                                 except:
@@ -241,7 +241,7 @@ class SetRegistrationView(generics.CreateAPIView):
                                     registrant = FpUserRegistrant(user_firstname=data["user_firstname"],
                                                                   user_lastname=data["user_firstname"],
                                                                   user_email=data["user_mail"],
-                                                                  user_snumber=data["user_login"],
+                                                                  user_login=data["user_login"],
                                                                   institutes=[institute_one, institute_two])
                                     registrant.save()
                                 except:
@@ -258,12 +258,13 @@ class SetRegistrationView(generics.CreateAPIView):
                         user = FpUserRegistrant.objects.get(user_firstname=data["user_firstname"],
                                                             user_lastname=data["user_firstname"],
                                                             user_email=data["user_mail"],
-                                                            user_snumber=data["user_login"],
+                                                            user_login=data["user_login"],
                                                             institutes=[institute_one, institute_two])
                         serializer = self.get_serializer(data=user)
                     except:
                         err_data = {"error": "Die Anmeldung ist fehlgeschlagen"}
                         return Response(data=err_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                    """TODO: send mail to user and(?) partner"""
 
                     # Registration complete
                     return Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -278,3 +279,9 @@ class SetRegistrationView(generics.CreateAPIView):
         else:
             err_data = {"error": "Die Daten des Registrierenden Users sind nicht vollstaendig."}
             return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+
+"""TODO: Add an Accept/Decline partnership View
+"""
+"""TODO: Add a Cancel Registration view
+"""
+

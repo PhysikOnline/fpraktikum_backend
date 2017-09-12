@@ -35,7 +35,8 @@ class FpInstitute(models.Model):
                             max_length=100
                             )
 
-    places = models.IntegerField(verbose_name=_("places"),
+    places = models.IntegerField(default=0,
+                                 verbose_name=_("places"),
                                  blank=True,
                                  null=True
                                  )
@@ -83,11 +84,11 @@ class FpUserPartner(models.Model):
     user_email = models.EmailField(verbose_name=_("user email"),
                                    null=True, blank=True
                                    )
-    user_snumber = models.CharField(max_length=100,
-                                    verbose_name=_("s number / login"),
-                                    null=True,
-                                    blank=True
-                                    )
+    user_login = models.CharField(max_length=100,
+                                  verbose_name=_("s number / login"),
+                                  null=True,
+                                  blank=True
+                                 )
     institutes = models.ManyToManyField(FpInstitute,
                                         verbose_name=_("institutes"),
                                         blank=True
@@ -117,7 +118,7 @@ class FpUserRegistrant(models.Model):
     user_email = models.EmailField(verbose_name=_("user email"),
                                    null=True, blank=True
                                    )
-    user_snumber = models.CharField(max_length=100,
+    user_login = models.CharField(max_length=100,
                                     verbose_name=_("s number / login"),
                                     null=True,
                                     blank=True
