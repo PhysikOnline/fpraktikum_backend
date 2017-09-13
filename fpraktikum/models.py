@@ -14,9 +14,9 @@ class FpRegistration(models.Model):
                                 verbose_name=_("semester"),
                                 blank=True)
     start_date = models.DateTimeField(verbose_name=_("startdate of registration"),
-                                      null=True)
+                                      )
     end_date = models.DateTimeField(verbose_name=_("enddate of registration"),
-                                    null=True)
+                                    )
 
     class Meta:
         verbose_name = _("FP registration")
@@ -38,7 +38,7 @@ class FpInstitute(models.Model):
     places = models.IntegerField(default=0,
                                  verbose_name=_("places"),
                                  blank=True,
-                                 null=True
+
                                  )
 
     graduation = models.CharField(max_length=2,
@@ -49,13 +49,11 @@ class FpInstitute(models.Model):
     registration = models.ForeignKey(FpRegistration,
                                      verbose_name=_("registration"),
                                      related_name="institutes",
-                                     null=True,
                                      blank=True
                                      )
 
     semester_half = models.IntegerField(verbose_name=_("semester half"),
                                         blank=True,
-                                        null=True,
                                         choices=SEMESTER_HALF
                                         )
 
@@ -70,24 +68,25 @@ class FpInstitute(models.Model):
 class FpUserRegistrant(models.Model):
     user_firstname = models.CharField(max_length=100,
                                       verbose_name=_("user firstname"),
-                                      null=True,
                                       blank=True
                                       )
     user_lastname = models.CharField(max_length=100,
                                      verbose_name=_("user lastname"),
-                                     null=True,
                                      blank=True
                                      )
     partner_has_accepted = models.BooleanField(default=False,
-                                       verbose_name=_("Partner has accepted"))
+                                               verbose_name=_("Partner has accepted"))
     user_email = models.EmailField(verbose_name=_("user email"),
-                                   null=True, blank=True
+                                   blank=True
                                    )
     user_login = models.CharField(max_length=100,
-                                    verbose_name=_("s number / login"),
-                                    null=True,
-                                    blank=True
-                                    )
+                                  verbose_name=_("s number / login"),
+                                  blank=True
+                                  )
+    user_matrikel = models.CharField(max_length=100,
+                                     verbose_name=_("Matrikelnumber"),
+                                     blank=True
+                                     )
     institutes = models.ManyToManyField(FpInstitute,
                                         verbose_name=_("institutes"),
                                         blank=True
@@ -96,32 +95,34 @@ class FpUserRegistrant(models.Model):
     class Meta:
         verbose_name = _("User/Registrant")
         verbose_name_plural = _("Users/Registrants")
+        unique_together = (('user_firstname', 'user_lastname', 'user_email', 'user_login', 'user_matrikel'),)
 
     def __unicode__(self):
-        return self.user_name
+        return self.user_lastname
 
 
 class FpUserPartner(models.Model):
     user_firstname = models.CharField(max_length=100,
                                       verbose_name=_("user firstname"),
-                                      null=True,
                                       blank=True
                                       )
     user_lastname = models.CharField(max_length=100,
                                      verbose_name=_("user lastname"),
-                                     null=True,
                                      blank=True
                                      )
     has_accepted = models.BooleanField(default=False,
-                                       verbose_name=_("Partner has accepted"))
+                                       verbose_name=_("Has accepted"))
     user_email = models.EmailField(verbose_name=_("user email"),
-                                   null=True, blank=True
+                                   blank=True
                                    )
     user_login = models.CharField(max_length=100,
                                   verbose_name=_("s number / login"),
-                                  null=True,
                                   blank=True
                                   )
+    user_matrikel = models.CharField(max_length=100,
+                                     verbose_name=_("Matrikelnumber"),
+                                     blank=True
+                                     )
     institutes = models.ManyToManyField(FpInstitute,
                                         verbose_name=_("institutes"),
                                         blank=True
@@ -129,30 +130,39 @@ class FpUserPartner(models.Model):
     registrant = models.OneToOneField(FpUserRegistrant,
                                       verbose_name=_("registrant"),
                                       related_name="partner",
-                                      null=True,
                                       blank=True
                                       )
 
     class Meta:
         verbose_name = _("User/Partner")
         verbose_name_plural = _("Users/Partners")
+        unique_together = (('user_firstname', 'user_lastname', 'user_email', 'user_login', 'user_matrikel'),)
 
     def __unicode__(self):
-        return self.user_name
+        return self.user_lastname
+
 
 class FpWaitlist(models.Model):
 
-    user_name = models.CharField(max_length=100,
-                                 verbose_name=_("user name"),
-                                 null=True)
+    user_firstname = models.CharField(max_length=100,
+                                      verbose_name=_("user firstname"),
+                                      )
+    user_lastname = models.CharField(max_length=100,
+                                     verbose_name=_("user lastname"),
+                                     )
     user_email = models.EmailField(verbose_name=_("user email"),
-                                   null=True)
-    user_snumber = models.CharField(max_length=100,
-                                    verbose_name=_("s number / login"),
-                                    null=True,
-                                    blank=True)
+                                   )
+    user_login = models.CharField(max_length=100,
+                                  verbose_name=_("s number / login"),
+                                  blank=True)
+    user_matrikel = models.CharField(max_length=100,
+                                     verbose_name=_("Matrikelnummer"),
+                                     blank=True)
 
-
+    class Meta:
+        verbose_name = _("Waitlist")
+        verbose_name_plural = _("Waitlists")
+        unique_together = (('user_firstname', 'user_lastname', 'user_email', 'user_login', 'user_matrikel'),)
 
 
 
