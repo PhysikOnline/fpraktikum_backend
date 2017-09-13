@@ -44,6 +44,7 @@ django-filter==1.0.4
 # Documentation of REST-Framework
 coreapi==2.3.1
 pygments==2.2.0
+django-rest-swagger
 
 # CORS Headers
 django-cors-headers == 2.0.0
