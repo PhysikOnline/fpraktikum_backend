@@ -87,6 +87,7 @@ class SetRegistrationView(views.APIView):
     """
     name = 'set_registration'
     queryset = FpUserRegistrant.objects.all()
+    serializer_class = DemoSerializer
 
     def post(self, request, *args, **kwargs):
         """
@@ -330,7 +331,7 @@ class SetRegistrationView(views.APIView):
 class AcceptDeclinePartnershipView(generics.CreateAPIView):
     name = 'accapt_decline'
     queryset = FpUserPartner.objects.all()
-    serializer_class = FpFullUserPartnerSerializer
+    serializer_class = AcceptDeclineSerializer
 
     def post(self, request, *args, **kwargs):
         """
