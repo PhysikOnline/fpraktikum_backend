@@ -105,7 +105,7 @@ if os.environ.get("IN_DOCKER"):
            'PASSWORD': 'password',
            'PORT': 5432,
         },
-        'ilias_db':{
+        'ilias_db': {
             'ENGINE': 'django.db.backends.mysql',
             'NAME': str(os.environ.get("ILIAS_DB_NAME")),
             'USER': str(os.environ.get("ILIAS_DB_USER")),
@@ -129,7 +129,7 @@ elif os.environ.get("DATABASE_URL"):
             'HOST': HOST,
             'PORT': int(PORT),
         },
-        'ilias_db':{
+        'ilias_db': {
             'ENGINE': 'django.db.backends.mysql',
             'NAME': str(os.environ.get("ILIAS_DB_NAME")),
             'USER': str(os.environ.get("ILIAS_DB_USER")),
