@@ -2,7 +2,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics, status, views
 from rest_framework.response import Response
 
-from fpraktikum.utils import get_semester, il_db_retrieve
+from fpraktikum.utils import get_semester
+from fpraktikum.db_utils import  il_db_retrieve, check_user
 from .serializers import *
 
 
@@ -36,26 +37,32 @@ class UserCheckView(generics.RetrieveAPIView):
         # Perform the lookup filtering.
         lookup_field = self.lookup_field
 
-        is_registrant = FpUserRegistrant.objects.filter(user_login=self.kwargs[lookup_field],
-                                                        institutes__registration__semester=semester)
-        is_partner = FpUserPartner.objects.filter(user_login=self.kwargs[lookup_field],
-                                                  institutes__registration__semester=semester)
-        if is_registrant:
-            obj = is_registrant.distinct(lookup_field).get()
-            serializer = FpFullUserRegistrantSerializer(obj)
-            response = Response(serializer.data)
-            response.data["status"] = "registrant"
-            return response
+        user_status_data = check_user(self.kwargs[lookup_field])
+        response_data = user_status_data["data"]
+        response = Response(response_data)
+        response.data["status"] = user_status_data["status"]
+        return response
 
-        elif is_partner:
-            obj = is_partner.distinct(lookup_field).get()
-            serializer = FpFullUserPartnerSerializer(obj)
-            response = Response(serializer.data)
-            response.data["status"] = "partner"
-            return response
-        else:
-            data = {"status": None}
-            return Response(data)
+        # is_registrant = FpUserRegistrant.objects.filter(user_login=self.kwargs[lookup_field],
+        #                                                 institutes__registration__semester=semester)
+        # is_partner = FpUserPartner.objects.filter(user_login=self.kwargs[lookup_field],
+        #                                           institutes__registration__semester=semester)
+        # if is_registrant:
+        #     obj = is_registrant.distinct(lookup_field).get()
+        #     serializer = FpFullUserRegistrantSerializer(obj)
+        #     response = Response(serializer.data)
+        #     response.data["status"] = "registrant"
+        #     return response
+        #
+        # elif is_partner:
+        #     obj = is_partner.distinct(lookup_field).get()
+        #     serializer = FpFullUserPartnerSerializer(obj)
+        #     response = Response(serializer.data)
+        #     response.data["status"] = "partner"
+        #     return response
+        # else:
+        #     data = {"status": None}
+        #     return Response(data)
 
         # filter_kwargs = {self.lookup_field: self.kwargs[lookup_url_kwarg]}
         # obj = get_object_or_404(queryset, **filter_kwargs)
