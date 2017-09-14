@@ -32,10 +32,9 @@ def check_user(login):
               "partner": (FpUserPartner, FpFullUserPartnerSerializer),
               "waitlist": (FpWaitlist, FpWaitlistSerializer),
               }
-    not_registerd_user = {"data": "",
-                          "status": None,
-                          }
-    return_value = {}
+    return_value = {"data": {},
+                    "status": None,
+                    }
     for k, v in models.iteritems():
         try:
             user = v[0].objects.get(user_login=login)
@@ -48,4 +47,4 @@ def check_user(login):
                             "status": k,
                             }
 
-    return return_value if (return_value["data"] and return_value["status"]) else not_registerd_user
+    return return_value
