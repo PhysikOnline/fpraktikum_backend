@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from .utils import get_semester
+from fpraktikum.utils import get_semester
 
 
 class FpRegistration(models.Model):
@@ -140,6 +140,7 @@ class FpUserPartner(models.Model):
     def __unicode__(self):
         return self.user_name
 
+
 class FpWaitlist(models.Model):
 
     user_name = models.CharField(max_length=100,
@@ -151,6 +152,7 @@ class FpWaitlist(models.Model):
                                     verbose_name=_("s number / login"),
                                     null=True,
                                     blank=True)
+
 
 
 
