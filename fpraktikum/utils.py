@@ -1,5 +1,4 @@
 from datetime import datetime
-from django.db import connections
 
 """
 This File is for Custom helper functions
@@ -24,4 +23,3 @@ def get_semester():
         semester = 'WS{}'.format(str(current_year)[2:4])
 
     return semester
-

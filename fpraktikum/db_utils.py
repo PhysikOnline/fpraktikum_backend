@@ -1,6 +1,7 @@
 from fpraktikum.ilias_model import UsrData
 from fpraktikum.models import FpUserRegistrant, FpUserPartner, FpWaitlist
-from fpraktikum.serializers import FpFullUserPartnerSerializer, FpFullUserRegistrantSerializer, FpWaitlistSerializer
+from fpraktikum.serializers import (FpFullUserPartnerSerializer, FpFullUserRegistrantSerializer, FpWaitlistSerializer,
+                                    RegistrationSerializer)
 
 
 def il_db_retrieve(user_firstname, user_lastname, user_login, user_mail):
@@ -23,7 +24,7 @@ def check_user(login):
     """
     This function will provide the current registration status of the student.
 
-    :param user_login: <str>
+    :param login: <str>
     :param semester:  <str>
     :return: Data of the student in the context of the Fpraktikum Registration
     """
@@ -48,3 +49,15 @@ def check_user(login):
                             }
 
     return return_value
+
+
+def validate_registration_data(data):
+
+    serializer = RegistrationSerializer()
+
+    try:
+        serializer.run_validation(data=data)
+    except serializer.ValidationError:
+        return False
+    else:
+        return True
