@@ -109,5 +109,4 @@ class AcceptDeclineSerializer(serializers.Serializer):
     user_lastname = serializers.CharField()
     user_login = serializers.CharField()
     user_mail = serializers.EmailField()
-    accept_decline = serializers.BooleanField()
-
+    accept = serializers.BooleanField()
