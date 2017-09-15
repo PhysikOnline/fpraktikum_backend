@@ -2,13 +2,12 @@
 
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
-
 from rest_framework import generics, status, views
-from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
 
-from fpraktikum.utils import get_semester
 from fpraktikum.db_utils import il_db_retrieve, check_user, check_institute, inst_recover
+from fpraktikum.utils import get_semester
 from .serializers import *
 
 
@@ -570,7 +569,7 @@ class AcceptDeclinePartnershipView(generics.CreateAPIView):
                 partner_data = FpUserPartner.objects.get(user_firstname=data['user_firstname'],
                                                          user_lastname=data['user_lastname'],
                                                          user_login=data['user_login'],
-                                                         user_mail=data['user_mail'])
+                                                         user_email=data['user_mail'])
             except FpUserPartner.DoesNotExist:
                 err_data = {"error": "Der User ist kein eingetragener Partner."}
                 return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
