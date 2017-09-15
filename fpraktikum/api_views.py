@@ -136,7 +136,7 @@ class SetRegistrationView(views.APIView):
         except ValidationError as err:
             return Response(data=err.detail, status=status.HTTP_400_BAD_REQUEST)
 
-        
+
         # validate
 
         # if data["user_firstname"] and data["user_lastname"] and data["user_login"] and data["user_mail"]:
