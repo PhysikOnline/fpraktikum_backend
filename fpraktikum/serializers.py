@@ -71,7 +71,7 @@ class FpWaitlistSerializer(serializers.ModelSerializer):
 
 class InstituteSerializer(serializers.Serializer):
     name = serializers.CharField()
-    gradiuation = serializers.CharField()
+    graduation = serializers.CharField()
     semesterhalf = serializers.IntegerField()
 
 
