@@ -130,7 +130,7 @@ class FpUserPartner(models.Model):
     registrant = models.OneToOneField(FpUserRegistrant,
                                       verbose_name=_("registrant"),
                                       related_name="partner",
-                                      blank=True
+                                      blank=True,
                                       )
 
     class Meta:
@@ -140,7 +140,6 @@ class FpUserPartner(models.Model):
 
     def __unicode__(self):
         return self.user_lastname
-
 
 
 class FpWaitlist(models.Model):

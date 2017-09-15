@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from fpraktikum.models import *
+from fpraktikum.models import FpInstitute, FpUserRegistrant, FpUserPartner, FpWaitlist, FpRegistration
 
 
 class FpInstituteSerializer(serializers.ModelSerializer):
@@ -68,32 +68,46 @@ class FpWaitlistSerializer(serializers.ModelSerializer):
         model = FpWaitlist
         fields = '__all__'
 
+
 class InstituteSerializer(serializers.Serializer):
-    name= serializers.CharField()
-    gradiuation= serializers.CharField()
-    semesterhalf= serializers.IntegerField()
+    name = serializers.CharField()
+    graduation = serializers.CharField()
+    semesterhalf = serializers.IntegerField()
 
 
 class PartnerSerializer(serializers.Serializer):
     user_firstname = serializers.CharField()
     user_lastname = serializers.CharField()
     user_login = serializers.CharField()
-    user_mail = serializers.CharField()
+    user_mail = serializers.EmailField()
+    user_matrikel = serializers.CharField()
 
 
-class DemoSerializer(serializers.Serializer):
-    user_firstname= serializers.CharField()
-    user_lastname= serializers.CharField()
-    user_login= serializers.CharField()
-    user_mail= serializers.CharField()
+class RegistrationSerializer(serializers.Serializer):
+    user_firstname = serializers.CharField()
+    user_lastname = serializers.CharField()
+    user_login = serializers.CharField()
+    user_mail = serializers.EmailField()
+    user_matrikel = serializers.CharField()
     institutes = InstituteSerializer(many=True)
-    partner = PartnerSerializer()
+    partner = PartnerSerializer(required=False, allow_null=True)
+
+    def validate_institutes(self, value):
+        """
+        Check that there are one or two Institutes given
+        :param value:
+        :return:
+        """
+
+        if not 1 <= len(value) <= 2:
+            raise serializers.ValidationError("Es wurden mehr als 2 oder keine Institute angegeben.")
+        return value
 
 
 class AcceptDeclineSerializer(serializers.Serializer):
     user_firstname = serializers.CharField()
     user_lastname = serializers.CharField()
     user_login = serializers.CharField()
-    user_mail = serializers.CharField()
+    user_mail = serializers.EmailField()
     accept_decline = serializers.BooleanField()
 
