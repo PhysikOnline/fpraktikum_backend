@@ -22,7 +22,7 @@ def il_db_retrieve(user_lastname, user_login, user_matrikel=None, user_firstname
     if user_firstname and user_mail and user_matrikel:
         try:
             user = UsrData.objects.using('ilias_db').get(firstname=user_firstname, lastname=user_lastname,
-                                       login=user_login, email=user_mail)
+                                                         login=user_login, email=user_mail)
         except UsrData.DoesNotExist:
             return None
         else:
@@ -35,15 +35,15 @@ def il_db_retrieve(user_lastname, user_login, user_matrikel=None, user_firstname
             return data
     else:
         try:
-            user = UsrData.objects.using('ilias_db').get(user_lastname=user_lastname, user_login=user_login)
+            user = UsrData.objects.using('ilias_db').get(lastname=user_lastname, login=user_login)
         except UsrData.DoesNotExist:
             return None
         else:
-            data = {"user_firstname": user.user_firstname,
-                    "user_lastname": user.user_lastname,
-                    "user_login": user.user_login,
-                    "user_mail": user.user_mail,
-                    "user_matrikel": user.user_matrikel
+            data = {"user_firstname": user.firstname,
+                    "user_lastname": user.lastname,
+                    "user_login": user.login,
+                    "user_mail": user.email,
+                    "user_matrikel": user.matriculation
                     }
             return data
     # try:
