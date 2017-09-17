@@ -8,5 +8,6 @@ urlpatterns = [
     url(r'^user/(?P<user_login>.+)/', UserCheckView.as_view(), name=UserCheckView.name),
     url(r'^register/', SetRegistrationView.as_view(), name=SetRegistrationView.name),
     url(r'^accept_decline/', AcceptDeclinePartnershipView.as_view(), name=AcceptDeclinePartnershipView.name),
+    url(r'^check_partner/', CheckPartnerView.as_view(), name=CheckPartnerView.name),
     url(r'test/', TestIlDbView.as_view()),
 ]
