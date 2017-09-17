@@ -26,7 +26,7 @@ def il_db_retrieve(user_lastname, user_login, user_matrikel=None, user_firstname
         except UsrData.DoesNotExist:
             return None
         else:
-            data = {"user_firstname":user_firstname,
+            data = {"user_firstname": user_firstname,
                     "user_lastname": user_lastname,
                     "user_login": user_login,
                     "user_mail": user_mail,
