@@ -537,7 +537,7 @@ class SetRegistrationView(views.APIView):
 
 
 class AcceptDeclinePartnershipView(generics.CreateAPIView):
-    name = 'accapt_decline'
+    name = 'accept'
     queryset = FpUserPartner.objects.all()
     serializer_class = AcceptDeclineSerializer
 
@@ -550,7 +550,8 @@ class AcceptDeclinePartnershipView(generics.CreateAPIView):
                         'user_lastname': <str>,
                         'user_login': <str>,
                         'user_mail': <str>,
-                        'accept_decline':<boolean> # True for accept , False for decline
+                        'user_matrikel': <str>
+                        'accept':<boolean> # True for accept , False for decline
                         }
 
         :param request:
@@ -560,48 +561,88 @@ class AcceptDeclinePartnershipView(generics.CreateAPIView):
         """
         data = request.data
 
-        # first check if the data is even provided
+        # validate data
+        try:
+            self.serializer_class().run_validation(data)
+        except ValidationError as err:
+            return Response(data=err.detail, status=status.HTTP_400_BAD_REQUEST)
 
-        if data['user_firstname'] and data['user_lastname'] and data['user_login'] and data['user_mail']:
-            # ok data is provided
-            # let's check if the user is really a "registered" Partner
+        # check if User is a registered Partner
+
+        try:
+            partner = FpUserPartner.objects.get(user_firstname=data["user_firstname"],
+                                                user_lastname=data["user_lastname"],
+                                                user_login=data["user_login"],
+                                                user_email=data["user_mail"],
+                                                user_matrikel=data["user_matrikel"])
+
+        except FpUserPartner.DoesNotExist:
+            err_data = {"error": "Der user ist kein eingetragener Partner."}
+            return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+
+        if data["accept"]:
             try:
-                partner_data = FpUserPartner.objects.get(user_firstname=data['user_firstname'],
-                                                         user_lastname=data['user_lastname'],
-                                                         user_login=data['user_login'],
-                                                         user_email=data['user_mail'])
-            except FpUserPartner.DoesNotExist:
-                err_data = {"error": "Der User ist kein eingetragener Partner."}
-                return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+                partner.has_accepted = True
+                partner.save()
+                partner.registrant.partner_has_accepted = True
+                partner.registrant.save()
+            except ValueError as err:
+                return Response(data=err, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-            if data["accept_decline"]:
-                # partner accepts
-                partner_data.has_accepted = True
-                partner_data.registrant.partner_has_accepted = True
-                try:
-                    partner_data.save()
-                    partner_data.registrant.save()
+            return Response(status=status.HTTP_200_OK)
 
-                except:
-                    err_data = {"error": "Der Prozess ist fehlgeschlagen."}
-                    return Response(data=err_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            else:
-                # Partner declines so we delete him
-                try:
-
-                    partner_data.delete()
-
-                except:
-                    err_data = {"error": "Der Prozess ist fehlgeschlagen."}
-                    return Response(data=err_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # delete The partner
+        else:
+            try:
+                partner.delete()
+            except Exception as err:
+                return Response(data=err, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             return Response(status=status.HTTP_200_OK)
 
 
-
-        else:
-            err_data = {"error": "Die Daten des Users sind nicht vollstaendig."}
-            return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+            # first check if the data is even provided
+            #
+            # if data['user_firstname'] and data['user_lastname'] and data['user_login'] and data['user_mail']:
+            #     # ok data is provided
+            #     # let's check if the user is really a "registered" Partner
+            #     try:
+            #         partner_data = FpUserPartner.objects.get(user_firstname=data['user_firstname'],
+            #                                                  user_lastname=data['user_lastname'],
+            #                                                  user_login=data['user_login'],
+            #                                                  user_email=data['user_mail'])
+            #     except FpUserPartner.DoesNotExist:
+            #         err_data = {"error": "Der User ist kein eingetragener Partner."}
+            #         return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+            #
+            #     if data["accept_decline"]:
+            #         # partner accepts
+            #         partner_data.has_accepted = True
+            #         partner_data.registrant.partner_has_accepted = True
+            #         try:
+            #             partner_data.save()
+            #             partner_data.registrant.save()
+            #
+            #         except:
+            #             err_data = {"error": "Der Prozess ist fehlgeschlagen."}
+            #             return Response(data=err_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            #     else:
+            #         # Partner declines so we delete him
+            #         try:
+            #
+            #             partner_data.delete()
+            #
+            #         except:
+            #             err_data = {"error": "Der Prozess ist fehlgeschlagen."}
+            #             return Response(data=err_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            #
+            #     return Response(status=status.HTTP_200_OK)
+            #
+            #
+            #
+            # else:
+            #     err_data = {"error": "Die Daten des Users sind nicht vollstaendig."}
+            #     return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CheckPartnerView(views.APIView):
