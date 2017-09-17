@@ -668,16 +668,16 @@ class CheckPartnerView(views.APIView):
             return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
 
         check = check_user(login=data["user_login"])
+
         if check["status"]:
             resp_data = check["data"]
             resp_data["status"] = check["status"]
             return Response(data=resp_data,status=status.HTTP_400_BAD_REQUEST)       # which status ?
+
         else:
             resp_data = partner_data
             resp_data["status"] = check["status"]
             return Response(data=resp_data, status=status.HTTP_200_OK)
-
-
 
 
 
