@@ -681,9 +681,112 @@ class CheckPartnerView(views.APIView):
             return Response(data=resp_data, status=status.HTTP_200_OK)
 
 
+class DeleteRegistrationView(views.APIView):
 
-class CancelRegistrationView():
-    pass
+    name = "del_reg"
+    serializer_class = PartnerSerializer
+    queryset = FpUserRegistrant.objects.all()
+
+    def delete(self, request, *args, **kwargs):
+        """
+        Coming soon...
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+
+        data = request.data
+
+        try:
+            self.serializer_class().run_validation(data=data)
+        except ValidationError as err:
+            return Response(data=err.detail, status=status.HTTP_400_BAD_REQUEST)
+
+        if not check_user(login=data["user_login"])["status"]:
+            err_data = {"error": "Der User ist nicht angemeldet."}
+            return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+
+        if check_user(login=data["user_login"])["status"] == "partner":
+            # we delete the Partner and set the registrant_partner_has_accepted value to Flase
+            try:
+                user = FpUserPartner.objects.get(user_firstname=data["user_firstname"],
+                                                 user_lastname=data["user_lastname"],
+                                                 user_login=data["user_login"],
+                                                 user_email=data["user_mail"],
+                                                 user_matrikel=data["user_matrikel"])
+            except FpUserPartner.DoesNotExist :
+                err_data = {"error": "Der User ist nicht angemeldet."}
+                return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+
+            user.registrant.partner_has_accepted = False
+            user.registrant.save()
+            try:
+                institutes = user.institutes.all()
+                for inst in institutes:
+                    inst.places += 1
+                user.delete()
+
+            except:
+                user.registrant.partner_has_accepted = True
+                user.registrant.save()
+                return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            return Response(data={"message":u"Die Anmeldung wurde erfolgreich gelöscht."}, status=status.HTTP_200_OK)
+
+        elif check_user(login=data["user_login"])["status"] == "registrant":
+            try:
+                user = FpUserRegistrant.objects.get(user_firstname=data["user_firstname"],
+                                                    user_lastname=data["user_lastname"],
+                                                    user_login=data["user_login"],
+                                                    user_email=data["user_mail"],
+                                                    user_matrikel=data["user_matrikel"])
+
+            except FpUserRegistrant.DoesNotExist :
+                err_data = {"error": "Der User ist nicht angemeldet."}
+                return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+
+            if user.partner and user.partner_has_accepted:
+                # get the Partner Data and make him a Registrant
+                # partner_as_registrant = FpUserRegistrant.create_from_partner(user)
+                try:
+                    FpUserRegistrant.create_from_partner(user.partner)
+                except IntegrityError as err:
+                    return Response(data=err.detail, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+                try:
+                    institutes = user.institutes.all()
+                    for inst in institutes:
+                        inst.places += 1
+                    user.delete()
+                except:
+                    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+                return Response(data={"message": u"Die Anmeldung wurde erfolgreich gelöscht."},
+                                status=status.HTTP_200_OK)
+            # elif user.partner and not user.partner_has_accepted:
+                #has partner but did not accept yet. Delete both.
+
+            else:
+                # here we actually deal with two cases:
+                # 1. He has a partner but the partner did not accept yet --> delete both add 2 to institutes.places
+                # 2. He has no partner --> delete him add 1 to institutes.places
+
+                places = 2 if user.partner else 1
+                
+                try:
+                    institutes = user.institutes.all()
+                    for inst in institutes:
+                        inst.places += places
+                    user.delete()
+
+                except:
+                    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+                return Response(data={"message": u"Die Anmeldung wurde erfolgreich gelöscht."},
+                                status=status.HTTP_200_OK)
+
+
 #TODO: Add a Cancel Registration view
 
 
