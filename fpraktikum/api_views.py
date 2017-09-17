@@ -686,5 +686,44 @@ class CancelRegistrationView():
     pass
 #TODO: Add a Cancel Registration view
 
+
 class WaitlistView(views.APIView):
-    pass
+
+    name = "waitlist"
+    serializer_class = PartnerSerializer
+    queryset = FpWaitlist.objects.all()
+
+    def post(self, request, *args, **kwargs):
+
+        data = request.data
+
+        try:
+            self.serializer_class().run_validation(data=data)
+        except ValidationError as err:
+            return Response(data=err.detail, status=status.HTTP_400_BAD_REQUEST)
+
+        if not il_db_retrieve(user_firstname=data["user_firstname"], user_lastname=data["user_lastname"],
+                              user_login=data["user_login"], user_mail=data["user_mail"],
+                              user_matrikel=data["user_matrikel"]):
+            err_data = {"error": "Dieser User existiert nicht im Elearning System"}
+            return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+
+        if check_user(data["user_login"])["status"]:
+            err_data = {
+                "error": "Der User hat folgenden Registrierungsstatus :{}".format(check_user(data["user_login"])["status"])}
+            return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+
+        # everything fine set waitlist entry
+
+        try:
+            user = FpWaitlist(user_firstname=data["user_firstname"],
+                              user_lastname=data["user_lastname"],
+                              user_login=data["user_login"],
+                              user_email=data["user_mail"],
+                              user_matrikel=data["user_matrikel"])
+            user.save()
+        except:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        return_data = FpWaitlistSerializer(user)
+        return Response(data=return_data, status=status.HTTP_200_OK)
