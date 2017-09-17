@@ -248,6 +248,7 @@ class SetRegistrationView(views.APIView):
                     except Exception as err:
                         inst_recover(institute_one=institutes[0], institute_two=institutes[1], places=2)
                         return Response(data=err.detail, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
                     serializer = FpFullUserRegistrantSerializer(user)
                     return Response(data=serializer.data, status=status.HTTP_200_OK)
 
