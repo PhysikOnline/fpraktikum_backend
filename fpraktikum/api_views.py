@@ -603,6 +603,38 @@ class AcceptDeclinePartnershipView(generics.CreateAPIView):
             err_data = {"error": "Die Daten des Users sind nicht vollstaendig."}
             return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
 
+
+class CheckPartnerView(views.APIView):
+    name = "check_partner"
+    serializer_class = CheckPartnerSerializer
+
+    def post(self, request, *args, **kwargs):
+
+
+        data = request.data
+        try:
+            self.serializer_class().run_validation(data=data)
+        except ValidationError as err:
+            return  Response(data=err.detail, status=status.HTTP_400_BAD_REQUEST)
+
+        partner_data = il_db_retrieve(user_lastname=data["user_lastname"], user_login=data["user_login"])
+
+        if not partner_data:
+            err_data = {"error": "Dieser User existiert nicht im Elearning System."}
+            return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+
+        #just return this ?
+
+        # check = check_user(login=data["user_login"])
+        # if check["status"]:
+        #     data = check["data"]
+        #     data["status"] = check["status"]
+        #     return Response(data=data, )
+        #
+
+
+
+
 class CancelRegistrationView():
     pass
 #TODO: Add a Cancel Registration view
