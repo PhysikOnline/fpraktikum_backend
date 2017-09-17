@@ -219,7 +219,6 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 200000000
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 
-
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
@@ -238,7 +237,7 @@ REST_FRAMEWORK = {
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-CSRF_TRUSTED_ORIGINS = ['*',]
+CSRF_TRUSTED_ORIGINS = ['*']
 
 
 # CORS_ORIGIN_WHITELIST = ()
