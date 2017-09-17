@@ -686,4 +686,5 @@ class CancelRegistrationView():
     pass
 #TODO: Add a Cancel Registration view
 
-
+class WaitlistView(views.APIView):
+    pass
