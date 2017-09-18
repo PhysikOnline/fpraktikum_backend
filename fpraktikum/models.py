@@ -52,7 +52,7 @@ class FpInstitute(models.Model):
                                      blank=True
                                      )
 
-    semester_half = models.IntegerField(verbose_name=_("semester half"),
+    semesterhalf = models.IntegerField(verbose_name=_("semester half"),
                                         blank=True,
                                         choices=SEMESTER_HALF
                                         )

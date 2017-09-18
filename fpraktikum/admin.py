@@ -8,7 +8,7 @@ from .models import FpRegistration, FpUserRegistrant, FpUserPartner, FpWaitlist,
 
 class FpInstituteAdmin(admin.ModelAdmin):
 
-    list_display = ['name', 'places', 'graduation', 'get_registration', 'semester_half']
+    list_display = ['name', 'places', 'graduation', 'get_registration', 'semesterhalf']
 
     def get_registration(self, obj):
         return obj.registration.semester
