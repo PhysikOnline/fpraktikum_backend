@@ -21,7 +21,7 @@ class FpInstituteInline(admin.TabularInline):
 
 
 class FpUserPartnerAdmin(admin.ModelAdmin):
-    list_display = ("user_firstname", "user_lastname", "user_matrikel", "has_accepted", "user_email", "user_login",
+    list_display = ("user_firstname", "user_lastname", "user_matrikel", "has_accepted", "user_mail", "user_login",
                     "get_institutes", "registrant")
 
     def get_institutes(self, obj):
@@ -42,7 +42,7 @@ admin.site.register(FpRegistration, FpRegistrationAdmin)
 
 class FpUserRegistrantAdmin(admin.ModelAdmin):
     list_display = (
-    "user_firstname", "user_lastname", "user_matrikel", "partner_has_accepted", "user_email", "user_login",
+    "user_firstname", "user_lastname", "user_matrikel", "partner_has_accepted", "user_mail", "user_login",
     "get_institutes", "partner")
 
     def get_institutes(self, obj):

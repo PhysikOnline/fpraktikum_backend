@@ -26,7 +26,7 @@ class FpLessUserPartnerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FpUserPartner
-        fields = ("user_firstname", "user_lastname", "user_matrikel", "has_accepted", "user_email", "user_login",
+        fields = ("user_firstname", "user_lastname", "user_matrikel", "has_accepted", "user_mail", "user_login",
                   "institutes")
 
 
@@ -40,7 +40,7 @@ class FpFullUserRegistrantSerializer(serializers.ModelSerializer):
     class Meta:
         model = FpUserRegistrant
         fields = (
-        "user_firstname", "user_lastname", "user_matrikel", "partner_has_accepted", "user_email", "user_login",
+        "user_firstname", "user_lastname", "user_matrikel", "partner_has_accepted", "user_mail", "user_login",
         "institutes", "partner")
 
 
@@ -53,7 +53,7 @@ class FpLessUserRegistrantSerializer(serializers.ModelSerializer):
     class Meta:
         model = FpUserRegistrant
         fields = (
-        "user_firstname", "user_lastname", "user_matrikel", "partner_has_accepted", "user_email", "user_login",
+        "user_firstname", "user_lastname", "user_matrikel", "partner_has_accepted", "user_mail", "user_login",
         "institutes")
 
 
@@ -63,7 +63,7 @@ class FpFullUserPartnerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FpUserPartner
-        fields = ("user_firstname", "user_lastname", "user_matrikel", "has_accepted", "user_email", "user_login",
+        fields = ("user_firstname", "user_lastname", "user_matrikel", "has_accepted", "user_mail", "user_login",
                   "institutes", "registrant")
 
 

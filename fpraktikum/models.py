@@ -76,7 +76,7 @@ class FpUserRegistrant(models.Model):
                                      )
     partner_has_accepted = models.BooleanField(default=False,
                                                verbose_name=_("Partner has accepted"))
-    user_email = models.EmailField(verbose_name=_("user email"),
+    user_mail = models.EmailField(verbose_name=_("user email"),
                                    blank=True
                                    )
     user_login = models.CharField(max_length=100,
@@ -95,7 +95,7 @@ class FpUserRegistrant(models.Model):
     class Meta:
         verbose_name = _("User/Registrant")
         verbose_name_plural = _("Users/Registrants")
-        unique_together = (('user_firstname', 'user_lastname', 'user_email', 'user_login', 'user_matrikel'),)
+        unique_together = (('user_firstname', 'user_lastname', 'user_mail', 'user_login', 'user_matrikel'),)
 
     def __unicode__(self):
         return self.user_lastname
@@ -112,7 +112,7 @@ class FpUserPartner(models.Model):
                                      )
     has_accepted = models.BooleanField(default=False,
                                        verbose_name=_("Has accepted"))
-    user_email = models.EmailField(verbose_name=_("user email"),
+    user_mail = models.EmailField(verbose_name=_("user email"),
                                    blank=True
                                    )
     user_login = models.CharField(max_length=100,
@@ -136,7 +136,7 @@ class FpUserPartner(models.Model):
     class Meta:
         verbose_name = _("User/Partner")
         verbose_name_plural = _("Users/Partners")
-        unique_together = (('user_firstname', 'user_lastname', 'user_email', 'user_login', 'user_matrikel'),)
+        unique_together = (('user_firstname', 'user_lastname', 'user_mail', 'user_login', 'user_matrikel'),)
 
     def __unicode__(self):
         return self.user_lastname
@@ -150,7 +150,7 @@ class FpWaitlist(models.Model):
     user_lastname = models.CharField(max_length=100,
                                      verbose_name=_("user lastname"),
                                      )
-    user_email = models.EmailField(verbose_name=_("user email"),
+    user_mail = models.EmailField(verbose_name=_("user email"),
                                    )
     user_login = models.CharField(max_length=100,
                                   verbose_name=_("s number / login"),
@@ -162,7 +162,7 @@ class FpWaitlist(models.Model):
     class Meta:
         verbose_name = _("Waitlist")
         verbose_name_plural = _("Waitlists")
-        unique_together = (('user_firstname', 'user_lastname', 'user_email', 'user_login', 'user_matrikel'),)
+        unique_together = (('user_firstname', 'user_lastname', 'user_mail', 'user_login', 'user_matrikel'),)
 
 
 
