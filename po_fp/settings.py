@@ -67,8 +67,6 @@ MIDDLEWARE = [
 
 ]
 
-
-
 ROOT_URLCONF = 'po_fp.urls'
 
 TEMPLATES = [
