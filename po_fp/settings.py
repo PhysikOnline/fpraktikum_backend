@@ -58,9 +58,8 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'fpraktikum.disable.DisableCsrf',
-    #'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.common.CommonMiddleware'
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -68,7 +67,7 @@ MIDDLEWARE = [
 
 ]
 
-CSRF_COOKIE_SECURE = True
+
 
 ROOT_URLCONF = 'po_fp.urls'
 

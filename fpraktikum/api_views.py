@@ -6,6 +6,8 @@ from rest_framework import generics, status, views
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
+from braces.views import CsrfExemptMixin
+
 from fpraktikum.db_utils import il_db_retrieve, check_user, check_institute, inst_recover
 from fpraktikum.utils import get_semester
 from .serializers import *
@@ -91,7 +93,7 @@ class TestIlDbView(generics.RetrieveAPIView):
 
 # TODO Think about checking inst_one == inst_two and wether User/Partner is allready registered.
 
-class SetRegistrationView(views.APIView):
+class SetRegistrationView(CsrfExemptMixin, views.APIView):
     """
     This is the main view for setting a Registration to the Fortgeschrittenen Praktikum.
 
@@ -215,7 +217,7 @@ class SetRegistrationView(views.APIView):
                         partner.institutes.set(institutes)
                     except Exception as err:
                         inst_recover(institute_one=institutes[0], institute_two=institutes[1], places=2)
-                        return Response(data=err.detail, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                        return Response(data=err, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                     # TODO: send mail
                     # finish with responding the registerd data
 
