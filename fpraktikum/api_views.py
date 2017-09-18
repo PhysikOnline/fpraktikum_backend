@@ -779,12 +779,12 @@ class CheckPartnerView(views.APIView):
             return Response(data=resp_data, status=status.HTTP_200_OK)
 
 
-class DeleteRegistrationView(views.APIView):
-
-    name = "del_reg"
-    serializer_class = PartnerSerializer
-    queryset = FpUserRegistrant.objects.all()
-
+# class DeleteRegistrationView(views.APIView):
+#
+#     name = "del_reg"
+#     serializer_class = PartnerSerializer
+#     queryset = FpUserRegistrant.objects.all()
+#
     # def delete(self, request, *args, **kwargs):
     #     """
     #     Coming soon...
