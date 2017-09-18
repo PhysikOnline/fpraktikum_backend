@@ -95,7 +95,7 @@ class TestIlDbView(generics.RetrieveAPIView):
 
 
 # TODO Think about checking inst_one == inst_two and wether User/Partner is allready registered.
-
+ @method_decorator(csrf_exempt, name='dispatch')
 class SetRegistrationView(views.APIView):
     """
     This is the main view for setting a Registration to the Fortgeschrittenen Praktikum.
@@ -105,9 +105,6 @@ class SetRegistrationView(views.APIView):
     queryset = FpUserRegistrant.objects.all()
     serializer_class = RegistrationSerializer
 
-    @method_decorator(csrf_exempt)
-    def dispatch(self, request, *args, **kwargs):
-        return super(SetRegistrationView, self).dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         """
