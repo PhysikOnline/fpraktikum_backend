@@ -9,8 +9,6 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, status, views
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
-from rest_framework
-
 
 
 from fpraktikum.db_utils import il_db_retrieve, check_user, check_institute, inst_recover
@@ -96,8 +94,9 @@ class TestIlDbView(generics.RetrieveAPIView):
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+
 # TODO Think about checking inst_one == inst_two and wether User/Partner is allready registered.
- @method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(csrf_exempt, name='dispatch')
 class SetRegistrationView(views.APIView):
     """
     This is the main view for setting a Registration to the Fortgeschrittenen Praktikum.
