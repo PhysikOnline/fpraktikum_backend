@@ -6,7 +6,7 @@ from fpraktikum.models import FpInstitute, FpUserRegistrant, FpUserPartner, FpWa
 class FpInstituteSerializer(serializers.ModelSerializer):
     class Meta:
         model = FpInstitute
-        fields = ('name', 'places', 'graduation', 'semester_half')
+        fields = ('name', 'places', 'graduation', 'semesterhalf')
 
 
 class FpRegistrationSerializer(serializers.ModelSerializer):

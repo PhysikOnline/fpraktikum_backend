@@ -109,17 +109,17 @@ def check_institute(institute_one, institute_two=None):
         # now try to recieve the institute
         inst_one = FpInstitute.objects.get(name=institute_one["name"],
                                            graduation=institute_one["graduation"],
-                                           semester_half=institute_one["semesterhalf"])
+                                           semesterhalf=institute_one["semesterhalf"])
         inst_two = FpInstitute.objects.get(name=institute_two["name"],
                                            graduation=institute_two["graduation"],
-                                           semester_half=institute_two["semesterhalf"])
+                                           semesterhalf=institute_two["semesterhalf"])
 
         return (inst_one, inst_two)
 
     else:
         inst_one = inst_one = FpInstitute.objects.get(name=institute_one["name"],
                                                       graduation=institute_one["graduation"],
-                                                      semester_half=institute_one["semesterhalf"])
+                                                      semesterhalf=institute_one["semesterhalf"])
 
         return (inst_one,)
 
