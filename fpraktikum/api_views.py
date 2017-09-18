@@ -107,7 +107,7 @@ class SetRegistrationView(views.APIView):
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
-        return super(UserCreate, self).dispatch(request, *args, **kwargs)
+        return super(SetRegistrationView, self).dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         """
