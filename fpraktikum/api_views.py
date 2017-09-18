@@ -206,13 +206,13 @@ class SetRegistrationView(views.APIView):
                         user = FpUserRegistrant(user_firstname=data["user_firstname"],
                                                 user_lastname=data["user_lastname"],
                                                 user_login=data["user_login"],
-                                                user_email=data["user_mail"],
+                                                user_mail=data["user_mail"],
                                                 user_matrikel=data["user_matrikel"])
                         user.save()
                         partner = FpUserPartner(user_firstname=p_f_name,
                                                 user_lastname=p_l_name,
                                                 user_login=p_login,
-                                                user_email=p_mail,
+                                                user_mail=p_mail,
                                                 user_matrikel=p_matrikel,
                                                 registrant=user)
                         partner.save()
@@ -246,7 +246,7 @@ class SetRegistrationView(views.APIView):
                         user = FpUserRegistrant(user_firstname=data["user_firstname"],
                                                 user_lastname=data["user_lastname"],
                                                 user_login=data["user_login"],
-                                                user_email=data["user_mail"],
+                                                user_mail=data["user_mail"],
                                                 user_matrikel=data["user_matrikel"])
                         user.save()
                     except (ValueError, IntegrityError) as err:
@@ -283,13 +283,13 @@ class SetRegistrationView(views.APIView):
                         user = FpUserRegistrant(user_firstname=data["user_firstname"],
                                                 user_lastname=data["user_lastname"],
                                                 user_login=data["user_login"],
-                                                user_email=data["user_mail"],
+                                                user_mail=data["user_mail"],
                                                 user_matrikel=data["user_matrikel"])
                         user.save()
                         partner = FpUserPartner(user_firstname=p_f_name,
                                                 user_lastname=p_l_name,
                                                 user_login=p_login,
-                                                user_email=p_mail,
+                                                user_mail=p_mail,
                                                 user_matrikel=p_matrikel,
                                                 registrant=user)
                         partner.save()
@@ -318,7 +318,7 @@ class SetRegistrationView(views.APIView):
                         user = FpUserRegistrant(user_firstname=data["user_firstname"],
                                                 user_lastname=data["user_lastname"],
                                                 user_login=data["user_login"],
-                                                user_email=data["user_mail"],
+                                                user_mail=data["user_mail"],
                                                 user_matrikel=data["user_matrikel"])
                         user.save()
                     except (ValueError, IntegrityError) as err:
@@ -583,7 +583,7 @@ class AcceptDeclinePartnershipView(generics.CreateAPIView):
             partner = FpUserPartner.objects.get(user_firstname=data["user_firstname"],
                                                 user_lastname=data["user_lastname"],
                                                 user_login=data["user_login"],
-                                                user_email=data["user_mail"],
+                                                user_mail=data["user_mail"],
                                                 user_matrikel=data["user_matrikel"])
 
         except FpUserPartner.DoesNotExist:
