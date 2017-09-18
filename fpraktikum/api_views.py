@@ -2,9 +2,14 @@
 
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+
 from rest_framework import generics, status, views
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
+
+
 
 from fpraktikum.db_utils import il_db_retrieve, check_user, check_institute, inst_recover
 from fpraktikum.utils import get_semester
@@ -99,6 +104,10 @@ class SetRegistrationView(views.APIView):
     name = 'set_registration'
     queryset = FpUserRegistrant.objects.all()
     serializer_class = RegistrationSerializer
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(UserCreate, self).dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         """
