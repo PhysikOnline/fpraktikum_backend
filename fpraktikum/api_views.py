@@ -5,9 +5,11 @@ from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
+
 from rest_framework import generics, status, views
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
+from rest_framework
 
 
 
@@ -104,6 +106,7 @@ class SetRegistrationView(views.APIView):
     name = 'set_registration'
     queryset = FpUserRegistrant.objects.all()
     serializer_class = RegistrationSerializer
+    permission_classes = ()
 
 
     def post(self, request, *args, **kwargs):
