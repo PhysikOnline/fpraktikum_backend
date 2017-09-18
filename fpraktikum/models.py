@@ -91,6 +91,17 @@ class FpUserRegistrant(models.Model):
                                         verbose_name=_("institutes"),
                                         blank=True
                                         )
+    @classmethod
+    def create_from_partner(cls, partner):
+        user = cls(user_firstname=partner.user_firstname,
+                   user_lastname=partner.user_lastname,
+                   user_login=partner.user_login,
+                   user_email=partner.user_email,
+                   user_matrikel=partner.user_matrikel,
+                   )
+        user.save()
+        user.institutes.set(partner.institutes.all())
+        return user
 
     class Meta:
         verbose_name = _("User/Registrant")
