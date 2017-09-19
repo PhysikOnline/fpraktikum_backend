@@ -696,6 +696,7 @@ class WaitlistView(views.APIView):
     def post(self, request, *args, **kwargs):
 
         data = request.data
+        # TODO : This Code block (till the next try statement) occurs more often as Copy_Paste. Refactor it in a function!
 
         try:
             self.serializer_class().run_validation(data=data)
@@ -724,6 +725,6 @@ class WaitlistView(views.APIView):
             user.save()
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+
         return_data = FpWaitlistSerializer(user)
         return Response(data=return_data, status=status.HTTP_200_OK)
