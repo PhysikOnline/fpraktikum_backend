@@ -555,9 +555,9 @@ class SetRegistrationView(views.APIView):
         """
 
         data = request.data
-
+	
         try:
-            self.serializer_class().run_validation(data=data)
+            PartnerSerializer().run_validation(data=data)
         except ValidationError as err:
             return Response(data=err.detail, status=status.HTTP_400_BAD_REQUEST)
 
@@ -571,7 +571,7 @@ class SetRegistrationView(views.APIView):
                 user = FpUserPartner.objects.get(user_firstname=data["user_firstname"],
                                                  user_lastname=data["user_lastname"],
                                                  user_login=data["user_login"],
-                                                 user_email=data["user_mail"],
+                                                 user_mail=data["user_mail"],
                                                  user_matrikel=data["user_matrikel"])
             except FpUserPartner.DoesNotExist:
                 err_data = {"error": "Der User ist nicht angemeldet."}
@@ -583,6 +583,7 @@ class SetRegistrationView(views.APIView):
                 institutes = user.institutes.all()
                 for inst in institutes:
                     inst.places += 1
+		    inst.save()
                 user.delete()
 
             except:
@@ -597,14 +598,17 @@ class SetRegistrationView(views.APIView):
                 user = FpUserRegistrant.objects.get(user_firstname=data["user_firstname"],
                                                     user_lastname=data["user_lastname"],
                                                     user_login=data["user_login"],
-                                                    user_email=data["user_mail"],
+                                                    user_mail=data["user_mail"],
                                                     user_matrikel=data["user_matrikel"])
 
             except FpUserRegistrant.DoesNotExist:
                 err_data = {"error": "Der User ist nicht angemeldet."}
                 return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
-
-            if user.partner and user.partner_has_accepted:
+	    try:
+		partner = user.partner
+	    except FpUserRegistrant.partner.RelatedObjectDoesNotExist:
+		partner = None
+            if partner and user.partner_has_accepted:	
                 # get the Partner Data and make him a Registrant
                 # partner_as_registrant = FpUserRegistrant.create_from_partner(user)
                 try:
@@ -616,6 +620,7 @@ class SetRegistrationView(views.APIView):
                     institutes = user.institutes.all()
                     for inst in institutes:
                         inst.places += 1
+			inst.save()
                     user.delete()
                 except:
                     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -630,12 +635,13 @@ class SetRegistrationView(views.APIView):
                 # 1. He has a partner but the partner did not accept yet --> delete both add 2 to institutes.places
                 # 2. He has no partner --> delete him add 1 to institutes.places
 
-                places = 2 if user.partner else 1
+                places = 2 if partner else 1
 
                 try:
                     institutes = user.institutes.all()
                     for inst in institutes:
                         inst.places += places
+			inst.save()
                     user.delete()
 
                 except:
