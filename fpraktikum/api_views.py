@@ -728,3 +728,28 @@ class WaitlistView(views.APIView):
 
         return_data = FpWaitlistSerializer(user)
         return Response(data=return_data, status=status.HTTP_200_OK)
+
+    def delete(self, request, *args, **kwargs):
+
+        data = request.data
+
+        try:
+            self.serializer_class().run_validation(data=data)
+        except ValidationError as err:
+            return Response(data=err.detail, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = FpWaitlist.objects.get(user_firstname=data["user_firstname"],
+                                          user_lastname=data["user_lastname"],
+                                          user_login=data["user_login"],
+                                          user_email=data["user_mail"],
+                                          user_matrikel=data["user_matrikel"])
+        except FpWaitlist.DoesNotExist:
+            err_data = {"error": "Der User steht nicht auf der Warteliste."}
+            return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user.delete()
+        except:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        resp_data = {"message": "Die Abmeldung war erfolgreich."}
+        return Response(data=resp_data,status=status.HTTP_200_OK)
