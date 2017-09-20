@@ -750,7 +750,15 @@ class AcceptDeclinePartnershipView(generics.CreateAPIView):
                 partner.registrant.save()
             except ValueError as err:
                 return Response(data=err, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+            send_email(registrant_data={"user_firstname": partner.registrant.user_firstname,
+                                        "user_lastname": partner.registrant.user_lastname},
+                       partner_data={"user_firstname": data["user_firstname"],
+                                     "user_lastname": data["user_lastname"],
+                                     "registrant_firstname": partner.registrant.user_firstname,
+                                     "registrant_lastname": partner.registrant.user_lastname},
+                       registrant_to=partner.registrant.user_mail,
+                       partner_to=data["user_mail"],
+                       status="accept_acc")
             return Response(status=status.HTTP_200_OK)
 
         # delete The partner
@@ -759,7 +767,15 @@ class AcceptDeclinePartnershipView(generics.CreateAPIView):
                 partner.delete()
             except Exception as err:
                 return Response(data=err, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+            send_email(registrant_data={"user_firstname": partner.registrant.user_firstname,
+                                        "user_lastname": partner.registrant.user_lastname},
+                       partner_data={"user_firstname": data["user_firstname"],
+                                     "user_lastname": data["user_lastname"],
+                                     "registrant_firstname": partner.registrant.user_firstname,
+                                     "registrant_lastname": partner.registrant.user_lastname},
+                       registrant_to=partner.registrant.user_mail,
+                       partner_to=data["user_mail"],
+                       status="accept_dec")
             return Response(status=status.HTTP_200_OK)
 
 
@@ -991,7 +1007,10 @@ class WaitlistView(views.APIView):
             user.save()
         except Exception:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+        send_email(registrant_data={"user_firstname": data["user_firstname"],
+                                    "user_lastname": data["user_lastname"]},
+                   registrant_to=data["user_mail"],
+                   status="waitlist_reg")
         return_data = FpWaitlistSerializer(user)
         return Response(data=return_data.data, status=status.HTTP_200_OK)
 
@@ -1017,5 +1036,8 @@ class WaitlistView(views.APIView):
             user.delete()
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        return Response(data=resp_data,status=status.HTTP_200_OK)
+        send_email(registrant_data={"user_firstname": data["user_firstname"],
+                                    "user_lastname": data["user_lastname"]},
+                   registrant_to=data["user_mail"],
+                   status="waitlist_del")
+        return Response(status=status.HTTP_200_OK)

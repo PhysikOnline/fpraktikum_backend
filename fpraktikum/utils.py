@@ -75,13 +75,13 @@ def send_email(registrant_data={}, partner_data={}, registrant_to=None, partner_
                                 "fpraktikum/email/accept_partner_decline.html"],
                  }
     subject = "Fortgeschrittenen Praktikum"
-    from_email = "elearning@physik.uni-frankfurt.de"
+    from_email = "elearning@itp.uni-frankfurt.de"
     index = 0
-    for tmp in templates["status"]:
+    for tmp in templates[status]:
         context = data[index][0]
-        to_mail = data[index][1]
+        to_mail = [data[index][1], ]
 
-        message = get_template(tmp).render(Context(context))
+        message = get_template(tmp).render(context)
         mail = EmailMessage(subject, message, to=to_mail, from_email=from_email)
         mail.content_subtype = 'html'
         mail.send()
