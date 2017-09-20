@@ -11,7 +11,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from fpraktikum.db_utils import il_db_retrieve, check_user, check_institute, inst_recover
-from fpraktikum.utils import get_semester
+from fpraktikum.utils import get_semester, send_email
 from .serializers import *
 
 
@@ -228,6 +228,13 @@ class SetRegistrationView(views.APIView):
                     # TODO: send mail
                     # finish with responding the registerd data
 
+                    send_email(registrant_data={"user_firstname": data["user_firstname"],
+                                                "user_lastname": data["user_lastname"]},
+                               partner_data={"user_firstname": p_f_name,
+                                             "user_lastname": p_l_name},
+                               registrant_to=data["user_mail"],
+                               partner_to=p_mail,
+                               status="reg_reg_2")
                     serializer = FpFullUserRegistrantSerializer(user)
                     return Response(data=serializer.data, status=status.HTTP_200_OK)
 
@@ -258,6 +265,10 @@ class SetRegistrationView(views.APIView):
                         inst_recover(institute_one=institutes[0], institute_two=institutes[1], places=2)
                         return Response(data=err.detail, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+                    send_email(registrant_data={"user_firstname": data["user_firstname"],
+                                                "user_lastname": data["user_lastname"]},
+                               registrant_to=data["user_mail"],
+                               status="reg_reg_1")
                     serializer = FpFullUserRegistrantSerializer(user)
                     return Response(data=serializer.data, status=status.HTTP_200_OK)
 
@@ -303,6 +314,13 @@ class SetRegistrationView(views.APIView):
                         inst_recover(institute_one=institutes[0], places=1)
                         return Response(data=err.detail, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+                    send_email(registrant_data={"user_firstname": data["user_firstname"],
+                                                "user_lastname": data["user_lastname"]},
+                               partner_data={"user_firstname": p_f_name,
+                                             "user_lastname": p_l_name},
+                               registrant_to=data["user_mail"],
+                               partner_to=p_mail,
+                               status="reg_reg_2")
                     serializer = FpFullUserRegistrantSerializer(user)
                     return Response(data=serializer.data, status=status.HTTP_200_OK)
 
@@ -330,6 +348,10 @@ class SetRegistrationView(views.APIView):
                         inst_recover(institute_one=institutes[0], places=1)
                         return Response(data=err.detail, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+                    send_email(registrant_data={"user_firstname": data["user_firstname"],
+                                                "user_lastname": data["user_lastname"]},
+                               registrant_to=data["user_mail"],
+                               status="reg_reg_1")
                     serializer = FpFullUserRegistrantSerializer(user)
                     return Response(data=serializer.data, status=status.HTTP_200_OK)
 
@@ -555,7 +577,7 @@ class SetRegistrationView(views.APIView):
         """
 
         data = request.data
-	
+
         try:
             PartnerSerializer().run_validation(data=data)
         except ValidationError as err:
@@ -583,14 +605,20 @@ class SetRegistrationView(views.APIView):
                 institutes = user.institutes.all()
                 for inst in institutes:
                     inst.places += 1
-		    inst.save()
+                    inst.save()
                 user.delete()
 
             except:
                 user.registrant.partner_has_accepted = True
                 user.registrant.save()
                 return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+            send_email(registrant_data={"user_firstname": user.registrant.user_firstname,
+                                        "user_lastname": user.registrant.user_lastname},
+                       partner_data={"user_firstname": data["user_firstname"],
+                                     "user_lastname": data["user_firstname"]},
+                       registrant_to=user.registrant.user_mail,
+                       partner_to=data["user_mail"],
+                       status="reg_del_partner")
             return Response(data={"message": u"Die Anmeldung wurde erfolgreich gelöscht."}, status=status.HTTP_200_OK)
 
         elif check_user(login=data["user_login"])["status"] == "registrant":
@@ -604,11 +632,11 @@ class SetRegistrationView(views.APIView):
             except FpUserRegistrant.DoesNotExist:
                 err_data = {"error": "Der User ist nicht angemeldet."}
                 return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
-	    try:
-		partner = user.partner
-	    except FpUserRegistrant.partner.RelatedObjectDoesNotExist:
-		partner = None
-            if partner and user.partner_has_accepted:	
+        try:
+            partner = user.partner
+        except FpUserRegistrant.partner.RelatedObjectDoesNotExist:
+            partner = None
+            if partner and user.partner_has_accepted:
                 # get the Partner Data and make him a Registrant
                 # partner_as_registrant = FpUserRegistrant.create_from_partner(user)
                 try:
@@ -620,11 +648,17 @@ class SetRegistrationView(views.APIView):
                     institutes = user.institutes.all()
                     for inst in institutes:
                         inst.places += 1
-			inst.save()
+                        inst.save()
                     user.delete()
                 except:
                     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+                send_email(registrant_data={"user_firstname": data["user_firstname"],
+                                         "user_lastname": data["user_firstname"]},
+                           partner_data={"user_firstname": user.partner.user_firstname,
+                                         "user_lastname": user.partner.user_lastname},
+                           registrant_to=data["user_mail"],
+                           partner_to=user.partner.user_mail,
+                           status="reg_del_partner_stays")
                 return Response(data={"message": u"Die Anmeldung wurde erfolgreich gelöscht."},
                                 status=status.HTTP_200_OK)
                 # elif user.partner and not user.partner_has_accepted:
@@ -641,14 +675,28 @@ class SetRegistrationView(views.APIView):
                     institutes = user.institutes.all()
                     for inst in institutes:
                         inst.places += places
-			inst.save()
+                        inst.save()
+
                     user.delete()
 
                 except:
                     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+                if partner:
+                    send_email(registrant_data={"user_firstname": data["user_firstname"],
+                                                "user_lastname": data["user_firstname"]},
+                               partner_data={"user_firstname": user.partner.user_firstname,
+                                             "user_lastname": user.partner.user_lastname},
+                               registrant_to=data["user_mail"],
+                               partner_to=user.partner.user_mail,
+                               status="reg_del_2")
+                else:
+                    send_email(registrant_data={"user_firstname": data["user_firstname"],
+                                                "user_lastname": data["user_firstname"]},
+                               registrant_to=data["user_mail"],
+                               status="reg_del_1")
                 return Response(data={"message": u"Die Anmeldung wurde erfolgreich gelöscht."},
                                 status=status.HTTP_200_OK)
+
 
 class AcceptDeclinePartnershipView(generics.CreateAPIView):
     name = 'accept'
