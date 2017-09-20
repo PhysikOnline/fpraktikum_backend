@@ -938,14 +938,14 @@ class WaitlistView(views.APIView):
             user = FpWaitlist(user_firstname=data["user_firstname"],
                               user_lastname=data["user_lastname"],
                               user_login=data["user_login"],
-                              user_email=data["user_mail"],
+                              user_mail=data["user_mail"],
                               user_matrikel=data["user_matrikel"])
             user.save()
-        except:
+        except Exception:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return_data = FpWaitlistSerializer(user)
-        return Response(data=return_data, status=status.HTTP_200_OK)
+        return Response(data=return_data.data, status=status.HTTP_200_OK)
 
     def delete(self, request, *args, **kwargs):
 
@@ -960,7 +960,7 @@ class WaitlistView(views.APIView):
             user = FpWaitlist.objects.get(user_firstname=data["user_firstname"],
                                           user_lastname=data["user_lastname"],
                                           user_login=data["user_login"],
-                                          user_email=data["user_mail"],
+                                          user_mail=data["user_mail"],
                                           user_matrikel=data["user_matrikel"])
         except FpWaitlist.DoesNotExist:
             err_data = {"error": "Der User steht nicht auf der Warteliste."}
@@ -969,5 +969,5 @@ class WaitlistView(views.APIView):
             user.delete()
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        resp_data = {"message": "Die Abmeldung war erfolgreich."}
+
         return Response(data=resp_data,status=status.HTTP_200_OK)
