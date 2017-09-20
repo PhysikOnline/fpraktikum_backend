@@ -687,11 +687,13 @@ class CancelRegistrationView():
 #TODO: Add a Cancel Registration view
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class WaitlistView(views.APIView):
 
     name = "waitlist"
     serializer_class = PartnerSerializer
     queryset = FpWaitlist.objects.all()
+    permission_classes = ()
 
     def post(self, request, *args, **kwargs):
 
