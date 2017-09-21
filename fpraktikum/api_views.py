@@ -967,7 +967,7 @@ class CheckPartnerView(views.APIView):
 class WaitlistView(views.APIView):
 
     name = "waitlist"
-    serializer_class = PartnerSerializer
+    serializer_class = WaitlistSerializer
     queryset = FpWaitlist.objects.all()
     permission_classes = ()
 
@@ -999,7 +999,8 @@ class WaitlistView(views.APIView):
                               user_lastname=data["user_lastname"],
                               user_login=data["user_login"],
                               user_mail=data["user_mail"],
-                              user_matrikel=data["user_matrikel"])
+                              user_matrikel=data["user_matrikel"],
+                              graduation=data["graduation"])
             user.save()
         except Exception:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)

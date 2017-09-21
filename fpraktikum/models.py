@@ -154,6 +154,7 @@ class FpUserPartner(models.Model):
 
 
 class FpWaitlist(models.Model):
+    GRADUATION_CHOICES = (("BA", "Bachelor"), ("MA", "Master"), ("L", "Lehramt"))
 
     user_firstname = models.CharField(max_length=100,
                                       verbose_name=_("user firstname"),
@@ -169,6 +170,10 @@ class FpWaitlist(models.Model):
     user_matrikel = models.CharField(max_length=100,
                                      verbose_name=_("Matrikelnummer"),
                                      blank=True)
+    graduation = models.CharField(max_length=2,
+                                  choices=GRADUATION_CHOICES,
+                                  blank=True
+                                  )
 
     class Meta:
         verbose_name = _("Waitlist")
