@@ -96,7 +96,7 @@ class FpUserRegistrant(models.Model):
         user = cls(user_firstname=partner.user_firstname,
                    user_lastname=partner.user_lastname,
                    user_login=partner.user_login,
-                   user_email=partner.user_email,
+                   user_mail=partner.user_mail,
                    user_matrikel=partner.user_matrikel,
                    )
         user.save()
