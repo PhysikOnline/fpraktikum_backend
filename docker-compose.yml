@@ -25,6 +25,10 @@ services:
       ILIAS_DB_PASS: "${ILIAS_DB_PASS}"
       ILIAS_DB_HOST: "${ILIAS_DB_HOST}"
       ILIAS_DB_PORT: "${ILIAS_DB_PORT}"
+      EMAIL_HOST: "${EMAIL_HOST}"
+      EMAIL_PORT: "${EMAIL_PORT}"
+      EMAIL_HOST_USER: "${EMAIL_HOST_USER}"
+      EMAIL_HOST_PASSWORD: "${EMAIL_HOST_PASSWORD}"
     ports:
      - "8000:8000"
 
