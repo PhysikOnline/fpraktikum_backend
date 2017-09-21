@@ -121,3 +121,10 @@ class CheckPartnerSerializer(serializers.Serializer):
     user_lastname = serializers.CharField()
     user_login = serializers.CharField()
 
+class WaitlistSerializer(serializers.Serializer):
+    user_firstname = serializers.CharField()
+    user_lastname = serializers.CharField()
+    user_login = serializers.CharField()
+    user_mail = serializers.EmailField()
+    user_matrikel = serializers.CharField()
+    graduation = serializers.CharField()
