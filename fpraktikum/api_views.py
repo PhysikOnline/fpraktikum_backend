@@ -93,9 +93,6 @@ class TestIlDbView(generics.RetrieveAPIView):
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
-
-# TODO Think about checking inst_one == inst_two and wether User/Partner is allready registered.
 @method_decorator(csrf_exempt, name='dispatch')
 class SetRegistrationView(views.APIView):
 
@@ -698,10 +695,13 @@ class SetRegistrationView(views.APIView):
                                 status=status.HTTP_200_OK)
 
 
+
+@method_decorator(csrf_exempt, name='dispatch')
 class AcceptDeclinePartnershipView(generics.CreateAPIView):
     name = 'accept'
     queryset = FpUserPartner.objects.all()
     serializer_class = AcceptDeclineSerializer
+    permission_classes = ()
 
     def post(self, request, *args, **kwargs):
         """
@@ -961,9 +961,6 @@ class CheckPartnerView(views.APIView):
     #
     #             return Response(data={"message": u"Die Anmeldung wurde erfolgreich gelöscht."},
     #                             status=status.HTTP_200_OK)
-
-
-#TODO: Add a Cancel Registration view
 
 
 @method_decorator(csrf_exempt, name='dispatch')
