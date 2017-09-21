@@ -842,15 +842,14 @@ class CheckPartnerView(views.APIView):
         partner_data = il_db_retrieve(user_lastname=data["user_lastname"], user_login=data["user_login"])
 
         if not partner_data:
-            err_data = {"error": "Dieser User existiert nicht im Elearning System."}
-            return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
         check = check_user(login=data["user_login"])
 
         if check["status"]:
             resp_data = check["data"]
             resp_data["status"] = check["status"]
-            return Response(data=resp_data,status=status.HTTP_400_BAD_REQUEST)       # which status ?
+            return Response(data=resp_data,status=status.HTTP_200_OK)
 
         else:
             resp_data = partner_data
