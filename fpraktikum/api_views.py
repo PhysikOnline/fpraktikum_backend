@@ -168,18 +168,18 @@ class SetRegistrationView(views.APIView):
             p_mail = data["partner"]["user_mail"]
             p_matrikel = data["partner"]["user_matrikel"]
 
-            with check_user(data["partner"]["user_login"])["status"] as p_status:
+            p_status = check_user(data["partner"]["user_login"])["status"]
 
-                # Check if Partner is in the ilias System
-                if not il_db_retrieve(user_firstname=p_f_name, user_lastname=p_l_name,
+            # Check if Partner is in the ilias System
+            if not il_db_retrieve(user_firstname=p_f_name, user_lastname=p_l_name,
                                       user_login=p_login,user_mail=p_mail, user_matrikel=p_mail):
-                    err_data = {"error": "Dieser User existiert nicht im Elearning System"}
-                    return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+                err_data = {"error": "Dieser User existiert nicht im Elearning System"}
+                return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
 
-                # This checks if the partner Registrationstatus is None
-                if p_status:
-                    err_data = {"error": "Der User hat folgenden Registrierungsstatus :{}".format(p_status)}
-                    return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+            # This checks if the partner Registrationstatus is None
+            if p_status:
+                err_data = {"error": "Der User hat folgenden Registrierungsstatus :{}".format(p_status)}
+                return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
 
         # now provided user/partner are ready for Registration
 
