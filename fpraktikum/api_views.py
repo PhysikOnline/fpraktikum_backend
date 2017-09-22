@@ -629,10 +629,10 @@ class SetRegistrationView(views.APIView):
             except FpUserRegistrant.DoesNotExist:
                 err_data = {"error": "Der User ist nicht angemeldet."}
                 return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
-        try:
-            partner = user.partner
-        except FpUserRegistrant.partner.RelatedObjectDoesNotExist:
-            partner = None
+            try:
+                partner = user.partner
+            except FpUserRegistrant.partner.RelatedObjectDoesNotExist:
+                partner = None
             if partner and user.partner_has_accepted:
                 # get the Partner Data and make him a Registrant
                 # partner_as_registrant = FpUserRegistrant.create_from_partner(user)
