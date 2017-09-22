@@ -51,7 +51,7 @@ def send_email(registrant_data={}, partner_data={}, registrant_to=None, partner_
                  "reg_del_1": ["fpraktikum/email/registration_delete_registrant.html",
                                ],
                  "reg_del_partner": ["fpraktikum/email/registration_delete_partner.html",
-                                     "fpraktikum/email/registration_parnter_has_deleted.html"],
+                                     "fpraktikum/email/registration_partner_has_deleted.html"],
                  "reg_del_partner_stays": ["fpraktikum/email/registration_delete_registrant.html",
                                            "fpraktikum/email/registration_parnter_has_deleted.html",
                                            ],

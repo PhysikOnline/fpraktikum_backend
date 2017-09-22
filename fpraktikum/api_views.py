@@ -579,12 +579,12 @@ class SetRegistrationView(views.APIView):
             PartnerSerializer().run_validation(data=data)
         except ValidationError as err:
             return Response(data=err.detail, status=status.HTTP_400_BAD_REQUEST)
-
-        if not check_user(login=data["user_login"])["status"]:
+        user_status = check_user(login=data["user_login"])["status"]
+        if not user_status:
             err_data = {"error": "Der User ist nicht angemeldet."}
             return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
 
-        if check_user(login=data["user_login"])["status"] == "partner":
+        if user_status == "partner":
             # we delete the Partner and set the registrant_partner_has_accepted value to Flase
             try:
                 user = FpUserPartner.objects.get(user_firstname=data["user_firstname"],
@@ -618,7 +618,7 @@ class SetRegistrationView(views.APIView):
                        status="reg_del_partner")
             return Response(data={"message": u"Die Anmeldung wurde erfolgreich gelöscht."}, status=status.HTTP_200_OK)
 
-        elif check_user(login=data["user_login"])["status"] == "registrant":
+        elif user_status == "registrant":
             try:
                 user = FpUserRegistrant.objects.get(user_firstname=data["user_firstname"],
                                                     user_lastname=data["user_lastname"],
