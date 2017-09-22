@@ -3,6 +3,9 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 
+from import_export import resources, fields
+from import_export.admin import ImportExportModelAdmin
+
 from .models import FpRegistration, FpUserRegistrant, FpUserPartner, FpWaitlist, FpInstitute
 
 
@@ -40,10 +43,42 @@ class FpRegistrationAdmin(admin.ModelAdmin):
 admin.site.register(FpRegistration, FpRegistrationAdmin)
 
 
-class FpUserRegistrantAdmin(admin.ModelAdmin):
+class RegistrantResource(resources.ModelResource):
+    # partner__user_firstname = fields.Field(column_name="partner firstname")
+    # partner__user_lastname = fields.Field(column_name="partner lastname")
+    # partner__user_matrikel = fields.Field(column_name="partner matrikel")
+    institute_semesterhalf = fields.Field()
+    institute_graduation = fields.Field()
+
+    class Meta:
+        model = FpUserRegistrant
+        fields = ("user_firstname", "user_lastname", "user_matrikel", "partner_has_accepted",
+                  "partner__user_firstname", "partner__user_lastname", "partner__user_matrikel",
+                  )
+        export_order = ("user_firstname", "user_lastname", "user_matrikel", "partner_has_accepted",
+                        "institute_semesterhalf", "institute_graduation", "partner__user_firstname",
+                        "partner__user_lastname", "partner__user_matrikel", )
+
+    def dehydrate_institute_semesterhalf(self, registrant):
+        institutes = registrant.institutes.all()
+        string = ""
+        for inst in institutes:
+            string += "name: {} semesterhalf: {},".format(inst.name, inst.semesterhalf)
+        return string
+
+    def dehydrate_institute_graduation(self, registrant):
+        institutes = registrant.institutes.all()
+        return " {}".format(institutes[0].graduation)
+
+    def dehydrate_partner_has_accepted(self, registrant):
+        return "Yes" if registrant.partner_has_accepted else "No"
+
+class FpUserRegistrantAdmin(ImportExportModelAdmin):
     list_display = (
     "user_firstname", "user_lastname", "user_matrikel", "partner_has_accepted", "user_mail", "user_login",
     "get_institutes", "partner")
+
+    resource_class = RegistrantResource
 
     def get_institutes(self, obj):
         return "\n".join([p.name for p in obj.institutes.all()])
@@ -56,3 +91,5 @@ class FpWaitlistAdmin(admin.ModelAdmin):
     list_display = [f.name for f in FpWaitlist._meta.get_fields()]
 
 admin.site.register(FpWaitlist, FpWaitlistAdmin)
+
+
