@@ -612,7 +612,7 @@ class SetRegistrationView(views.APIView):
             send_email(registrant_data={"user_firstname": user.registrant.user_firstname,
                                         "user_lastname": user.registrant.user_lastname},
                        partner_data={"user_firstname": data["user_firstname"],
-                                     "user_lastname": data["user_firstname"]},
+                                     "user_lastname": data["user_lastname"]},
                        registrant_to=user.registrant.user_mail,
                        partner_to=data["user_mail"],
                        status="reg_del_partner")
@@ -680,7 +680,7 @@ class SetRegistrationView(views.APIView):
                     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 if partner:
                     send_email(registrant_data={"user_firstname": data["user_firstname"],
-                                                "user_lastname": data["user_firstname"]},
+                                                "user_lastname": data["user_lastname"]},
                                partner_data={"user_firstname": user.partner.user_firstname,
                                              "user_lastname": user.partner.user_lastname},
                                registrant_to=data["user_mail"],
@@ -688,7 +688,7 @@ class SetRegistrationView(views.APIView):
                                status="reg_del_2")
                 else:
                     send_email(registrant_data={"user_firstname": data["user_firstname"],
-                                                "user_lastname": data["user_firstname"]},
+                                                "user_lastname": data["user_lastname"]},
                                registrant_to=data["user_mail"],
                                status="reg_del_1")
                 return Response(data={"message": u"Die Anmeldung wurde erfolgreich gelöscht."},
