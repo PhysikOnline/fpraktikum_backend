@@ -91,6 +91,11 @@ class FpUserRegistrant(models.Model):
                                         verbose_name=_("institutes"),
                                         blank=True
                                         )
+    notes = models.TextField(max_length=1000,
+                             verbose_name=_("Notes"),
+                             blank=True,
+                             null=True)
+
     @classmethod
     def create_from_partner(cls, partner):
         user = cls(user_firstname=partner.user_firstname,
@@ -98,6 +103,7 @@ class FpUserRegistrant(models.Model):
                    user_login=partner.user_login,
                    user_mail=partner.user_mail,
                    user_matrikel=partner.user_matrikel,
+                   notes=partner.notes
                    )
         user.save()
         user.institutes.set(partner.institutes.all())
@@ -143,6 +149,10 @@ class FpUserPartner(models.Model):
                                       related_name="partner",
                                       blank=True,
                                       )
+    notes = models.TextField(max_length=1000,
+                             verbose_name=_("Notes"),
+                             blank=True,
+                             null=True)
 
     class Meta:
         verbose_name = _("User/Partner")
@@ -174,6 +184,11 @@ class FpWaitlist(models.Model):
                                   choices=GRADUATION_CHOICES,
                                   blank=True
                                   )
+    notes = models.TextField(max_length=1000,
+                             verbose_name=_("Notes"),
+                             blank=True,
+                             null=True)
+
 
     class Meta:
         verbose_name = _("Waitlist")

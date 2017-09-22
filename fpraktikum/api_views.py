@@ -204,14 +204,16 @@ class SetRegistrationView(views.APIView):
                                                 user_lastname=data["user_lastname"],
                                                 user_login=data["user_login"],
                                                 user_mail=data["user_mail"],
-                                                user_matrikel=data["user_matrikel"])
+                                                user_matrikel=data["user_matrikel"],
+                                                notes=data["notes"],)
                         user.save()
                         partner = FpUserPartner(user_firstname=p_f_name,
                                                 user_lastname=p_l_name,
                                                 user_login=p_login,
                                                 user_mail=p_mail,
                                                 user_matrikel=p_matrikel,
-                                                registrant=user)
+                                                registrant=user,
+                                                notes=data["notes"])
                         partner.save()
                     except (ValueError, IntegrityError) as err:
                         inst_recover(institute_one=institutes[0], institute_two=institutes[1], places=2)
@@ -251,7 +253,9 @@ class SetRegistrationView(views.APIView):
                                                 user_lastname=data["user_lastname"],
                                                 user_login=data["user_login"],
                                                 user_mail=data["user_mail"],
-                                                user_matrikel=data["user_matrikel"])
+                                                user_matrikel=data["user_matrikel"],
+                                                notes=data["notes"]
+                                                )
                         user.save()
                     except (ValueError, IntegrityError) as err:
                         inst_recover(institute_one=institutes[0], institute_two=institutes[1], places=2)
@@ -292,14 +296,18 @@ class SetRegistrationView(views.APIView):
                                                 user_lastname=data["user_lastname"],
                                                 user_login=data["user_login"],
                                                 user_mail=data["user_mail"],
-                                                user_matrikel=data["user_matrikel"])
+                                                user_matrikel=data["user_matrikel"],
+                                                notes=data["notes"]
+                                                )
                         user.save()
                         partner = FpUserPartner(user_firstname=p_f_name,
                                                 user_lastname=p_l_name,
                                                 user_login=p_login,
                                                 user_mail=p_mail,
                                                 user_matrikel=p_matrikel,
-                                                registrant=user)
+                                                registrant=user,
+                                                notes=data["notes"]
+                                                )
                         partner.save()
                     except (ValueError, IntegrityError) as err:
                         inst_recover(institute_one=institutes[0], places=1)
@@ -334,7 +342,9 @@ class SetRegistrationView(views.APIView):
                                                 user_lastname=data["user_lastname"],
                                                 user_login=data["user_login"],
                                                 user_mail=data["user_mail"],
-                                                user_matrikel=data["user_matrikel"])
+                                                user_matrikel=data["user_matrikel"],
+                                                notes=data["notes"]
+                                                )
                         user.save()
                     except (ValueError, IntegrityError) as err:
                         inst_recover(institute_one=institutes[0], places=1)
@@ -1000,7 +1010,9 @@ class WaitlistView(views.APIView):
                               user_login=data["user_login"],
                               user_mail=data["user_mail"],
                               user_matrikel=data["user_matrikel"],
-                              graduation=data["graduation"])
+                              graduation=data["graduation"],
+                              notes=data["notes"]
+                              )
             user.save()
         except Exception:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)

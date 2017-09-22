@@ -54,10 +54,11 @@ class RegistrantResource(resources.ModelResource):
         model = FpUserRegistrant
         fields = ("user_firstname", "user_lastname", "user_matrikel", "partner_has_accepted",
                   "partner__user_firstname", "partner__user_lastname", "partner__user_matrikel",
+                  "notes",
                   )
         export_order = ("user_firstname", "user_lastname", "user_matrikel", "partner_has_accepted",
                         "institute_semesterhalf", "institute_graduation", "partner__user_firstname",
-                        "partner__user_lastname", "partner__user_matrikel", )
+                        "partner__user_lastname", "partner__user_matrikel", "notes")
 
     def dehydrate_institute_semesterhalf(self, registrant):
         institutes = registrant.institutes.all()

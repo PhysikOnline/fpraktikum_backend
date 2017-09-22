@@ -95,6 +95,7 @@ class RegistrationSerializer(serializers.Serializer):
     user_matrikel = serializers.CharField()
     institutes = InstituteSerializer(many=True)
     partner = PartnerSerializer(required=False, allow_null=True)
+    notes = serializers.CharField(required=False, allow_null=True, allow_blank=True, max_length=1000)
 
     def validate_institutes(self, value):
         """
@@ -128,3 +129,4 @@ class WaitlistSerializer(serializers.Serializer):
     user_mail = serializers.EmailField()
     user_matrikel = serializers.CharField()
     graduation = serializers.CharField()
+    notes = serializers.CharField(required=False, allow_null=True, allow_blank=True, max_length=1000)
