@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('fpraktikum', '0017_auto_20170918_1113'),
     ]
@@ -15,6 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='fpwaitlist',
             name='graduation',
-            field=models.CharField(blank=True, choices=[('BA', 'Bachelor'), ('MA', 'Master'), ('L', 'Lehramt')], max_length=2),
+            field=models.CharField(blank=True, choices=[('BA', 'Bachelor'), ('MA', 'Master'), ('L', 'Lehramt')],
+                                   max_length=2),
         ),
     ]

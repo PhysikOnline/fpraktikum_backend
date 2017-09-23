@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('fpraktikum', '0002_auto_20170730_1144'),
     ]

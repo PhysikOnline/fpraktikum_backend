@@ -8,7 +8,6 @@ from fpraktikum.utils import get_semester
 
 
 class FpRegistration(models.Model):
-
     semester = models.CharField(default=get_semester(),
                                 max_length=4,
                                 verbose_name=_("semester"),
@@ -53,9 +52,9 @@ class FpInstitute(models.Model):
                                      )
 
     semesterhalf = models.IntegerField(verbose_name=_("semester half"),
-                                        blank=True,
-                                        choices=SEMESTER_HALF
-                                        )
+                                       blank=True,
+                                       choices=SEMESTER_HALF
+                                       )
 
     class Meta:
         verbose_name = _("institute")
@@ -77,8 +76,8 @@ class FpUserRegistrant(models.Model):
     partner_has_accepted = models.BooleanField(default=False,
                                                verbose_name=_("Partner has accepted"))
     user_mail = models.EmailField(verbose_name=_("user email"),
-                                   blank=True
-                                   )
+                                  blank=True
+                                  )
     user_login = models.CharField(max_length=100,
                                   verbose_name=_("s number / login"),
                                   blank=True
@@ -130,8 +129,8 @@ class FpUserPartner(models.Model):
     has_accepted = models.BooleanField(default=False,
                                        verbose_name=_("Has accepted"))
     user_mail = models.EmailField(verbose_name=_("user email"),
-                                   blank=True
-                                   )
+                                  blank=True
+                                  )
     user_login = models.CharField(max_length=100,
                                   verbose_name=_("s number / login"),
                                   blank=True
@@ -173,7 +172,7 @@ class FpWaitlist(models.Model):
                                      verbose_name=_("user lastname"),
                                      )
     user_mail = models.EmailField(verbose_name=_("user email"),
-                                   )
+                                  )
     user_login = models.CharField(max_length=100,
                                   verbose_name=_("s number / login"),
                                   blank=True)
@@ -189,22 +188,7 @@ class FpWaitlist(models.Model):
                              blank=True,
                              null=True)
 
-
     class Meta:
         verbose_name = _("Waitlist")
         verbose_name_plural = _("Waitlists")
         unique_together = (('user_firstname', 'user_lastname', 'user_mail', 'user_login', 'user_matrikel'),)
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.test import SimpleTestCase
-
-from fpraktikum.utils import il_db_retrieve
 # Create your tests here.
 
 
