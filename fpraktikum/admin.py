@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from django.contrib import admin
-
 from import_export import resources, fields
 from import_export.admin import ImportExportModelAdmin
 
@@ -10,11 +9,11 @@ from .models import FpRegistration, FpUserRegistrant, FpUserPartner, FpWaitlist,
 
 
 class FpInstituteAdmin(admin.ModelAdmin):
-
     list_display = ['name', 'places', 'graduation', 'get_registration', 'semesterhalf']
 
     def get_registration(self, obj):
         return obj.registration.semester
+
 
 admin.site.register(FpInstitute, FpInstituteAdmin)
 
@@ -30,15 +29,16 @@ class FpUserPartnerAdmin(admin.ModelAdmin):
     def get_institutes(self, obj):
         return "\n".join([p.name for p in obj.institutes.all()])
 
+
 admin.site.register(FpUserPartner, FpUserPartnerAdmin)
 
 
 class FpRegistrationAdmin(admin.ModelAdmin):
-
     list_display = ['semester', 'start_date', 'end_date']
     inlines = [
         FpInstituteInline,
     ]
+
 
 admin.site.register(FpRegistration, FpRegistrationAdmin)
 
@@ -74,23 +74,23 @@ class RegistrantResource(resources.ModelResource):
     def dehydrate_partner_has_accepted(self, registrant):
         return "Yes" if registrant.partner_has_accepted else "No"
 
+
 class FpUserRegistrantAdmin(ImportExportModelAdmin):
     list_display = (
-    "user_firstname", "user_lastname", "user_matrikel", "partner_has_accepted", "user_mail", "user_login",
-    "get_institutes", "partner")
+        "user_firstname", "user_lastname", "user_matrikel", "partner_has_accepted", "user_mail", "user_login",
+        "get_institutes", "partner")
 
     resource_class = RegistrantResource
 
     def get_institutes(self, obj):
         return "\n".join([p.name for p in obj.institutes.all()])
 
+
 admin.site.register(FpUserRegistrant, FpUserRegistrantAdmin)
 
 
 class FpWaitlistAdmin(admin.ModelAdmin):
-
     list_display = [f.name for f in FpWaitlist._meta.get_fields()]
 
+
 admin.site.register(FpWaitlist, FpWaitlistAdmin)
-
-

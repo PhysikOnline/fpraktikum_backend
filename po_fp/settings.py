@@ -11,8 +11,9 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
-import environ
 import re
+
+import environ
 
 ROOT_DIR = environ.Path(
     __file__) - 2  # ==>( po-fp-django/po_fp/settings.py - 2 = po-fp-django/)
@@ -30,13 +31,12 @@ APPS_DIR = ROOT_DIR.path('fpraktikum')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY", 'secret')
-#'55$vbbbgy8kyw=^=w45%s))24*#0_^y8p4ngp*mxf&snnr1v&7'
+# '55$vbbbgy8kyw=^=w45%s))24*#0_^y8p4ngp*mxf&snnr1v&7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.environ.get("NODEBUG") is None else False
 
 ALLOWED_HOSTS = ['web', 'localhost'] if os.environ.get("NODEBUG") is None else ["po-fp.physikelearning.de"]
-
 
 # Application definition
 
@@ -100,12 +100,12 @@ if os.environ.get("IN_DOCKER"):
 
     DATABASES = {
         'default': {
-           'ENGINE': 'django.db.backends.postgresql_psycopg2',
-           'NAME': 'postgres',
-           'USER': 'postgres',
-           'HOST': 'db',
-           'PASSWORD': 'password',
-           'PORT': 5432,
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'postgres',
+            'USER': 'postgres',
+            'HOST': 'db',
+            'PASSWORD': 'password',
+            'PORT': 5432,
         },
         'ilias_db': {
             'ENGINE': 'django.db.backends.mysql',
@@ -120,10 +120,12 @@ if os.environ.get("IN_DOCKER"):
 
 elif os.environ.get("DATABASE_URL"):
 
-    USER, PASSWORD, HOST, PORT, NAME = re.match("^postgres://(?P<username>.*?)\:(?P<password>.*?)\@(?P<host>.*?)\:(?P<port>\d+)\/(?P<db>.*?)$", os.environ.get("DATABASE_URL", "")).groups()
+    USER, PASSWORD, HOST, PORT, NAME = re.match(
+        "^postgres://(?P<username>.*?)\:(?P<password>.*?)\@(?P<host>.*?)\:(?P<port>\d+)\/(?P<db>.*?)$",
+        os.environ.get("DATABASE_URL", "")).groups()
 
     DATABASES = {
-        'default':{
+        'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': NAME,
             'USER': USER,
@@ -151,8 +153,6 @@ EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = True
 
-
-
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
@@ -170,7 +170,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
@@ -206,7 +205,7 @@ STATIC_ROOT = str(ROOT_DIR('staticfiles'))
 # See: https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder', )
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',)
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
@@ -221,7 +220,6 @@ MEDIA_URL = '/media/'
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-FILE_UPLOAD_MAX_MEMORY_SIZE
 FILE_UPLOAD_MAX_MEMORY_SIZE = 200000000
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
@@ -230,12 +228,12 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES':
-    ['rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'],
+        ['rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'],
     'DEFAULT_RENDERER_CLASSES':
-    ('rest_framework.renderers.JSONRenderer',
-     'rest_framework.renderers.BrowsableAPIRenderer', ),
+        ('rest_framework.renderers.JSONRenderer',
+         'rest_framework.renderers.BrowsableAPIRenderer',),
     'TEST_REQUEST_DEFAULT_FORMAT':
-    'json',
+        'json',
 }
 
 # CORS Headers Configuration

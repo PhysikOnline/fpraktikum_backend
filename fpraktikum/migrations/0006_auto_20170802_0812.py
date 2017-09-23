@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('fpraktikum', '0005_auto_20170802_0804'),
     ]
@@ -14,7 +13,8 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='fpcoursesecondhalf',
-            options={'verbose_name': 'course for second semesterhalf', 'verbose_name_plural': 'courses for second semesterhalf'},
+            options={'verbose_name': 'course for second semesterhalf',
+                     'verbose_name_plural': 'courses for second semesterhalf'},
         ),
         migrations.AlterField(
             model_name='fpuserregistration',

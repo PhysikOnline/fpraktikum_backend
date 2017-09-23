@@ -9,7 +9,6 @@ This File is for Custom helper functions
 
 
 def get_semester():
-
     """
     A helper function to create the Semester acording to the current time of the registration.
     If the registration is createde befor May (5.month) the semester will be a SummerSemester (SS).
@@ -86,5 +85,3 @@ def send_email(registrant_data={}, partner_data={}, registrant_to=None, partner_
         mail.content_subtype = 'html'
         mail.send()
         index += 1
-
-

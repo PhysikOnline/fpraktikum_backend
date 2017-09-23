@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from rest_framework.exceptions import ValidationError
+
 from fpraktikum.ilias_model import UsrData
 from fpraktikum.models import FpUserRegistrant, FpUserPartner, FpWaitlist, FpInstitute
-from fpraktikum.serializers import (FpFullUserPartnerSerializer, FpFullUserRegistrantSerializer, FpWaitlistSerializer,
-                                    RegistrationSerializer)
-
-from rest_framework.exceptions import ValidationError
+from fpraktikum.serializers import (FpFullUserPartnerSerializer, FpFullUserRegistrantSerializer, FpWaitlistSerializer)
 
 
 def il_db_retrieve(user_lastname, user_login, user_matrikel=None, user_firstname=None, user_mail=None):
@@ -46,14 +45,14 @@ def il_db_retrieve(user_lastname, user_login, user_matrikel=None, user_firstname
                     "user_matrikel": user.matriculation
                     }
             return data
-    # try:
-    #     query = UsrData.objects.using('ilias_db').get(firstname=user_firstname, lastname=user_lastname,
-    #                                                   login=user_login, email=user_mail)
-    #
-    # except UsrData.DoesNotExist:
-    #     return False
-    #
-    # return query.usr_id
+            # try:
+            #     query = UsrData.objects.using('ilias_db').get(firstname=user_firstname, lastname=user_lastname,
+            #                                                   login=user_login, email=user_mail)
+            #
+            # except UsrData.DoesNotExist:
+            #     return False
+            #
+            # return query.usr_id
 
 
 def check_user(login):
@@ -101,7 +100,8 @@ def check_institute(institute_one, institute_two=None):
         if institute_two["semesterhalf"] == institute_one["semesterhalf"]:
             raise ValidationError(detail=u"Die Semesterhälften müssen unterschiedlich sein.")
         if institute_two["semesterhalf"] == 3 or institute_one["semesterhalf"] == 3:
-            raise ValidationError(detail=u"Eines der Institute wird für beide Semesterhälften belegt, bitte wähle nur dieses aus.")
+            raise ValidationError(
+                detail=u"Eines der Institute wird für beide Semesterhälften belegt, bitte wähle nur dieses aus.")
         if institute_two["name"] == institute_one["name"]:
             raise ValidationError(detail=u"Es müssen 2 unterschiedliche Institute ausgewählt werden.")
         if not institute_two["graduation"] == institute_one["graduation"]:
@@ -125,7 +125,6 @@ def check_institute(institute_one, institute_two=None):
 
 
 def inst_recover(institute_one, places, institute_two=None):
-
     if institute_two:
         institute_one.places += places
         institute_two.places += places
@@ -134,4 +133,3 @@ def inst_recover(institute_one, places, institute_two=None):
     else:
         institute_one.places += places
         institute_one.save()
-

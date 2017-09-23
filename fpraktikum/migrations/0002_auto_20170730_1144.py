@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('fpraktikum', '0001_initial'),
     ]
@@ -15,7 +14,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='course',
             name='graduation',
-            field=models.CharField(blank=True, choices=[('BA', 'Bachelor'), ('MA', 'Master'), ('L', 'Lehramt')], max_length=2),
+            field=models.CharField(blank=True, choices=[('BA', 'Bachelor'), ('MA', 'Master'), ('L', 'Lehramt')],
+                                   max_length=2),
         ),
         migrations.AlterField(
             model_name='fpregistration',
