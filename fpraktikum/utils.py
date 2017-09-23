@@ -1,7 +1,7 @@
 from datetime import datetime
-from django.template import Context
-from django.template.loader import render_to_string, get_template
+
 from django.core.mail import EmailMessage
+from django.template.loader import get_template
 
 """
 This File is for Custom helper functions
@@ -53,7 +53,7 @@ def send_email(registrant_data={}, partner_data={}, registrant_to=None, partner_
                  "reg_del_partner": ["fpraktikum/email/registration_delete_partner.html",
                                      "fpraktikum/email/registration_partner_has_deleted.html"],
                  "reg_del_partner_stays": ["fpraktikum/email/registration_delete_registrant.html",
-                                           "fpraktikum/email/registration_parnter_has_deleted.html",
+                                           "fpraktikum/email/registration_partner_has_deleted.html",
                                            ],
 
                  "reg_reg_2": ["fpraktikum/email/registration_registrant.html",
