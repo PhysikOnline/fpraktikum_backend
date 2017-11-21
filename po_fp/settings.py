@@ -36,7 +36,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", 'secret')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.environ.get("NODEBUG") is None else False
 
-ALLOWED_HOSTS = ['web', 'localhost'] if os.environ.get("NODEBUG") is None else ["po-fp.physikelearning.de"]
+ALLOWED_HOSTS = ['web', 'localhost' ,'po-fp-staging.physikelearning.de'] if os.environ.get("NODEBUG") is None else ["po-fp.physikelearning.de"]
 
 # Application definition
 
