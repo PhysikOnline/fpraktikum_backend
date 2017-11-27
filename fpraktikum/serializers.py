@@ -4,9 +4,10 @@ from fpraktikum.models import FpInstitute, FpUserRegistrant, FpUserPartner, FpWa
 
 
 class FpInstituteSerializer(serializers.ModelSerializer):
+    pk = serializers.IntegerField()
     class Meta:
         model = FpInstitute
-        fields = ('name', 'places', 'graduation', 'semesterhalf')
+        fields = ('pk', 'name', 'places', 'graduation', 'semesterhalf')
 
 
 class FpRegistrationSerializer(serializers.ModelSerializer):
@@ -33,7 +34,7 @@ class FpFullUserRegistrantSerializer(serializers.ModelSerializer):
     """
     This Serializer contains Full information of Registratn + Partner (if set).
     """
-    partner = FpLessUserPartnerSerializer()
+    partner = FpLessUserPartnerSerializer(required=False, allow_null=True)
     institutes = FpInstituteSerializer(many=True)
 
     class Meta:
@@ -41,6 +42,14 @@ class FpFullUserRegistrantSerializer(serializers.ModelSerializer):
         fields = (
             "user_firstname", "user_lastname", "user_matrikel", "partner_has_accepted", "user_mail", "user_login",
             "institutes", "partner", "notes")
+
+    def create(self, validated_data):
+        institutes = validated_data.pop('institutes')
+        user = FpUserRegistrant.objects.create(**validated_data)
+        for i in institutes:
+            inst = FpInstitute.objects.get(pk=i['pk'])
+            user.institutes.add(inst)
+        return user
 
 
 class FpLessUserRegistrantSerializer(serializers.ModelSerializer):
