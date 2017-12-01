@@ -8,7 +8,7 @@ from rest_framework import generics, status, views
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-from fpraktikum.db_utils import il_db_retrieve, check_user, check_institute, inst_recover
+from fpraktikum.db_utils import il_db_retrieve, check_institute, inst_recover
 from fpraktikum.utils import get_semester, send_email
 from .serializers import *
 
@@ -39,15 +39,25 @@ class UserCheckView(generics.RetrieveAPIView):
         queryset lookups.  Eg if objects are referenced using multiple
         keyword arguments in the url conf.
         """
-        semester = get_semester()
-        # Perform the lookup filtering.
-        lookup_field = self.lookup_field
+        login = self.kwargs[self.lookup_field]
 
-        user_status_data = check_user(self.kwargs[lookup_field])
-        response_data = user_status_data["data"]
-        response = Response(response_data)
-        response.data["status"] = user_status_data["status"]
-        return response
+        models = {"registrant": (FpUserRegistrant, FpFullUserRegistrantSerializer),
+                  "partner": (FpUserPartner, FpFullUserPartnerSerializer),
+                  "waitlist": (FpWaitlist, FpWaitlistSerializer),
+                  }
+        data = {"status": None}
+        for k, v in models.items():
+            try:
+                user = v[0].objects.get(user_login=login)
+
+            except v[0].DoesNotExist:
+                pass
+
+            else:
+
+                data = v[1](user).data
+                data["status"] = k
+        return Response(data)
 
 
 class TestIlDbView(generics.RetrieveAPIView):
