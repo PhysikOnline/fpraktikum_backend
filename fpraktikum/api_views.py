@@ -78,276 +78,282 @@ class TestIlDbView(generics.RetrieveAPIView):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class SetRegistrationView(views.APIView):
+class SetRegistrationView(generics.CreateAPIView):
     """
     This is the main view for setting a Registration to the Fortgeschrittenen Praktikum.
 
     """
     name = 'set_registration'
     queryset = FpUserRegistrant.objects.all()
-    serializer_class = RegistrationSerializer
+    serializer_class = FpFullUserRegistrantSerializer
     permission_classes = ()
+    # TODO: "override" the create method using super() and adding a Signal call for emails
+    
+    # def post(self, request, *args, **kwargs):
+    #     """
+    #     We rewrite the post command since we don't provide serializer like content.
+    #
+    #     The request.data dict is expected to look like this :
+    #
+    #     request.data = {
+    #                     'user_firstname': <str>,
+    #                     'user_lastname': <str>,
+    #                     'user_login': <str>,
+    #                     'user_mail': <str>,
+    #                     'institutes': [{'name':<str>,
+    #                                     'semesterhalf':<int: 1, 2, 3>
+    #                                     'graduation':<str: BA, MA, LA>
+    #                                     },{...}],
+    #                     'partner': {'user_firstname': <str>,
+    #                                'user_lastname': <str>,
+    #                                'user_login':<str>,
+    #                                 'user_mail':<str>,
+    #                                },
+    #                     }
+    #     In this dict the Institutes key should be a list of at least one or two institutes.
+    #     Also the partner is optional.
+    #
+    #     :param request:
+    #     :param args:
+    #     :param kwargs:
+    #     :return:
+    #     """
+    #     data = request.data
+    #
+    #     serializer = self.serializer_class(data)
+    #
+    #     if not serializer.is_valid():
+    #         return Response(data={'error':serializer.errors },status=status.HTTP_400_BAD_REQUEST)
+    #
+    #     serializer.save()
 
-    def post(self, request, *args, **kwargs):
-        """
-        We rewrite the post command since we don't provide serializer like content.
-
-        The request.data dict is expected to look like this :
-
-        request.data = {
-                        'user_firstname': <str>,
-                        'user_lastname': <str>,
-                        'user_login': <str>,
-                        'user_mail': <str>,
-                        'institutes': [{'name':<str>,
-                                        'semesterhalf':<int: 1, 2, 3>
-                                        'graduation':<str: BA, MA, LA>
-                                        },{...}],
-                        'partner': {'user_firstname': <str>,
-                                   'user_lastname': <str>,
-                                   'user_login':<str>,
-                                    'user_mail':<str>,
-                                   },
-                        }
-        In this dict the Institutes key should be a list of at least one or two institutes.
-        Also the partner is optional.
-
-        :param request:
-        :param args:
-        :param kwargs:
-        :return:
-        """
-        data = request.data
-
-        semester = get_semester()
-
-        try:
-            self.serializer_class().run_validation(
-                data=data)  # This checks if we have the data provided and correct datatypes
-        except ValidationError as err:
-            return Response(data=err.detail, status=status.HTTP_400_BAD_REQUEST)
-
-        # now we know the provided data is ther and has atleast the right Types
-        # check if the User exists
-
-        if not il_db_retrieve(user_firstname=data["user_firstname"], user_lastname=data["user_lastname"],
-                              user_login=data["user_login"], user_mail=data["user_mail"],
-                              user_matrikel=data["user_matrikel"]):
-            err_data = {"error": "Dieser User existiert nicht im Elearning System"}
-            return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
-
-        # This checks if the Users Registration status is None
-        if check_user(data["user_login"])["status"]:
-            err_data = {"error": "Der User hat folgenden Registrierungsstatus :{}".format(
-                check_user(data["user_login"])["status"])}
-            return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
-
-        # if a partner is provided we check his status too... for obvious reasons.
-        if data["partner"]:
-
-            p_f_name = data["partner"]["user_firstname"]
-            p_l_name = data["partner"]["user_lastname"]
-            p_login = data["partner"]["user_login"]
-            p_mail = data["partner"]["user_mail"]
-            p_matrikel = data["partner"]["user_matrikel"]
-
-            p_status = check_user(data["partner"]["user_login"])["status"]
-
-            # Check if Partner is in the ilias System
-            if not il_db_retrieve(user_firstname=p_f_name, user_lastname=p_l_name,
-                                  user_login=p_login, user_mail=p_mail, user_matrikel=p_mail):
-                err_data = {"error": "Dieser User existiert nicht im Elearning System"}
-                return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
-
-            # This checks if the partner Registrationstatus is None
-            if p_status:
-                err_data = {"error": "Der User hat folgenden Registrierungsstatus :{}".format(p_status)}
-                return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
-
-        # now provided user/partner are ready for Registration
-
-        # check the institutes
-        if len(data["institutes"]) == 2:
-            # two institutes
-            try:
-                institutes = check_institute(institute_one=data["institutes"][0],
-                                             institute_two=data["institutes"][1])
-            except FpInstitute.DoesNotExist:
-                err_data = {"error": "Eins der angegebenen Institute existiert nicht."}
-                return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
-            # now set registration
-            if data["partner"]:
-                if institutes[0].places >= 2 and institutes[1] >= 2:
-                    institutes[0].places -= 2
-                    institutes[1].places -= 2
-                    institutes[0].save()
-                    institutes[1].save()
-                    try:
-                        user = FpUserRegistrant(user_firstname=data["user_firstname"],
-                                                user_lastname=data["user_lastname"],
-                                                user_login=data["user_login"],
-                                                user_mail=data["user_mail"],
-                                                user_matrikel=data["user_matrikel"],
-                                                notes=data["notes"], )
-                        user.save()
-                        partner = FpUserPartner(user_firstname=p_f_name,
-                                                user_lastname=p_l_name,
-                                                user_login=p_login,
-                                                user_mail=p_mail,
-                                                user_matrikel=p_matrikel,
-                                                registrant=user,
-                                                notes=data["notes"])
-                        partner.save()
-                    except (ValueError, IntegrityError) as err:
-                        inst_recover(institute_one=institutes[0], institute_two=institutes[1], places=2)
-                        return Response(data=err.detail, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-                    try:
-                        user.institutes.set(institutes)
-                        partner.institutes.set(institutes)
-                    except Exception as err:
-                        inst_recover(institute_one=institutes[0], institute_two=institutes[1], places=2)
-                        return Response(data=err, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-                    # TODO: send mail
-                    # finish with responding the registerd data
-
-                    send_email(registrant_data={"user_firstname": data["user_firstname"],
-                                                "user_lastname": data["user_lastname"]},
-                               partner_data={"user_firstname": p_f_name,
-                                             "user_lastname": p_l_name},
-                               registrant_to=data["user_mail"],
-                               partner_to=p_mail,
-                               status="reg_reg_2")
-                    serializer = FpFullUserRegistrantSerializer(user)
-                    return Response(data=serializer.data, status=status.HTTP_200_OK)
-
-                else:
-                    err_data = {"error": u"In einem der ausgewählten Institute ist nicht ausreichend Platz."}
-                    return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
-
-            else:
-                # we only register the User
-                if institutes[0].places >= 1 and institutes[1] >= 1:
-                    institutes[0].places -= 1
-                    institutes[1].places -= 1
-                    institutes[0].save()
-                    institutes[1].save()
-                    try:
-                        user = FpUserRegistrant(user_firstname=data["user_firstname"],
-                                                user_lastname=data["user_lastname"],
-                                                user_login=data["user_login"],
-                                                user_mail=data["user_mail"],
-                                                user_matrikel=data["user_matrikel"],
-                                                notes=data["notes"]
-                                                )
-                        user.save()
-                    except (ValueError, IntegrityError) as err:
-                        inst_recover(institute_one=institutes[0], institute_two=institutes[1], places=2)
-                        return Response(data=err.detail, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-                    try:
-                        user.institutes.set(institutes)
-                    except Exception as err:
-                        inst_recover(institute_one=institutes[0], institute_two=institutes[1], places=2)
-                        return Response(data=err.detail, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-                    send_email(registrant_data={"user_firstname": data["user_firstname"],
-                                                "user_lastname": data["user_lastname"]},
-                               registrant_to=data["user_mail"],
-                               status="reg_reg_1")
-                    serializer = FpFullUserRegistrantSerializer(user)
-                    return Response(data=serializer.data, status=status.HTTP_200_OK)
-
-                else:
-                    err_data = {"error": u"In einem der ausgewählten Institute ist nicht ausreichend Platz."}
-                    return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
-
-        else:
-            # since validation was True we register with one institute
-            try:
-                institutes = check_institute(institute_one=data["institutes"][0])
-            except FpInstitute.DoesNotExist:
-                err_data = {"error": "Das angegebene Institut existiert nicht."}
-                return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
-            except ValidationError as err:
-                return Response(data=err.detail, status=status.HTTP_400_BAD_REQUEST)
-
-            if data["partner"]:
-                if institutes[0].places >= 2:
-                    institutes[0].places -= 2
-                    institutes[0].save()
-                    try:
-                        user = FpUserRegistrant(user_firstname=data["user_firstname"],
-                                                user_lastname=data["user_lastname"],
-                                                user_login=data["user_login"],
-                                                user_mail=data["user_mail"],
-                                                user_matrikel=data["user_matrikel"],
-                                                notes=data["notes"]
-                                                )
-                        user.save()
-                        partner = FpUserPartner(user_firstname=p_f_name,
-                                                user_lastname=p_l_name,
-                                                user_login=p_login,
-                                                user_mail=p_mail,
-                                                user_matrikel=p_matrikel,
-                                                registrant=user,
-                                                notes=data["notes"]
-                                                )
-                        partner.save()
-                    except (ValueError, IntegrityError) as err:
-                        inst_recover(institute_one=institutes[0], places=1)
-                        return Response(data=err.detail, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-                    try:
-                        user.institutes.set(institutes)
-                        partner.institutes.set(institutes)
-                    except StandardError as err:
-                        inst_recover(institute_one=institutes[0], places=1)
-                        return Response(data=err.detail, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-                    send_email(registrant_data={"user_firstname": data["user_firstname"],
-                                                "user_lastname": data["user_lastname"]},
-                               partner_data={"user_firstname": p_f_name,
-                                             "user_lastname": p_l_name},
-                               registrant_to=data["user_mail"],
-                               partner_to=p_mail,
-                               status="reg_reg_2")
-                    serializer = FpFullUserRegistrantSerializer(user)
-                    return Response(data=serializer.data, status=status.HTTP_200_OK)
-
-                else:
-                    err_data = {"error": u"In einem der ausgewählten Institute ist nicht ausreichend Platz."}
-                    return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
-            else:
-                # we only register the user
-                if institutes[0].places >= 1:
-                    institutes[0].places -= 1
-                    institutes[0].save()
-                    try:
-                        user = FpUserRegistrant(user_firstname=data["user_firstname"],
-                                                user_lastname=data["user_lastname"],
-                                                user_login=data["user_login"],
-                                                user_mail=data["user_mail"],
-                                                user_matrikel=data["user_matrikel"],
-                                                notes=data["notes"]
-                                                )
-                        user.save()
-                    except (ValueError, IntegrityError) as err:
-                        inst_recover(institute_one=institutes[0], places=1)
-                        return Response(data=err.detail, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-                    try:
-                        user.institutes.set(institutes)
-                    except StandardError as err:
-                        inst_recover(institute_one=institutes[0], places=1)
-                        return Response(data=err.detail, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-                    send_email(registrant_data={"user_firstname": data["user_firstname"],
-                                                "user_lastname": data["user_lastname"]},
-                               registrant_to=data["user_mail"],
-                               status="reg_reg_1")
-                    serializer = FpFullUserRegistrantSerializer(user)
-                    return Response(data=serializer.data, status=status.HTTP_200_OK)
-
-                else:
-                    err_data = {"error": u"In einem der ausgewählten Institute ist nicht ausreichend Platz."}
-                    return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+        # try:
+        #     self.serializer_class().run_validation(
+        #         data=data)  # This checks if we have the data provided and correct datatypes
+        # except ValidationError as err:
+        #     return Response(data=err.detail, status=status.HTTP_400_BAD_REQUEST)
+        #
+        # # now we know the provided data is ther and has atleast the right Types
+        # # check if the User exists
+        #
+        # if not il_db_retrieve(user_firstname=data["user_firstname"], user_lastname=data["user_lastname"],
+        #                       user_login=data["user_login"], user_mail=data["user_mail"],
+        #                       user_matrikel=data["user_matrikel"]):
+        #     err_data = {"error": "Dieser User existiert nicht im Elearning System"}
+        #     return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+        #
+        # # This checks if the Users Registration status is None
+        # if check_user(data["user_login"])["status"]:
+        #     err_data = {"error": "Der User hat folgenden Registrierungsstatus :{}".format(
+        #         check_user(data["user_login"])["status"])}
+        #     return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+        #
+        # # if a partner is provided we check his status too... for obvious reasons.
+        # if data["partner"]:
+        #
+        #     p_f_name = data["partner"]["user_firstname"]
+        #     p_l_name = data["partner"]["user_lastname"]
+        #     p_login = data["partner"]["user_login"]
+        #     p_mail = data["partner"]["user_mail"]
+        #     p_matrikel = data["partner"]["user_matrikel"]
+        #
+        #     p_status = check_user(data["partner"]["user_login"])["status"]
+        #
+        #     # Check if Partner is in the ilias System
+        #     if not il_db_retrieve(user_firstname=p_f_name, user_lastname=p_l_name,
+        #                           user_login=p_login, user_mail=p_mail, user_matrikel=p_mail):
+        #         err_data = {"error": "Dieser User existiert nicht im Elearning System"}
+        #         return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+        #
+        #     # This checks if the partner Registrationstatus is None
+        #     if p_status:
+        #         err_data = {"error": "Der User hat folgenden Registrierungsstatus :{}".format(p_status)}
+        #         return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+        #
+        # # now provided user/partner are ready for Registration
+        #
+        # # check the institutes
+        # if len(data["institutes"]) == 2:
+        #     # two institutes
+        #     try:
+        #         institutes = check_institute(institute_one=data["institutes"][0],
+        #                                      institute_two=data["institutes"][1])
+        #     except FpInstitute.DoesNotExist:
+        #         err_data = {"error": "Eins der angegebenen Institute existiert nicht."}
+        #         return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+        #     # now set registration
+        #     if data["partner"]:
+        #         if institutes[0].places >= 2 and institutes[1] >= 2:
+        #             institutes[0].places -= 2
+        #             institutes[1].places -= 2
+        #             institutes[0].save()
+        #             institutes[1].save()
+        #             try:
+        #                 user = FpUserRegistrant(user_firstname=data["user_firstname"],
+        #                                         user_lastname=data["user_lastname"],
+        #                                         user_login=data["user_login"],
+        #                                         user_mail=data["user_mail"],
+        #                                         user_matrikel=data["user_matrikel"],
+        #                                         notes=data["notes"], )
+        #                 user.save()
+        #                 partner = FpUserPartner(user_firstname=p_f_name,
+        #                                         user_lastname=p_l_name,
+        #                                         user_login=p_login,
+        #                                         user_mail=p_mail,
+        #                                         user_matrikel=p_matrikel,
+        #                                         registrant=user,
+        #                                         notes=data["notes"])
+        #                 partner.save()
+        #             except (ValueError, IntegrityError) as err:
+        #                 inst_recover(institute_one=institutes[0], institute_two=institutes[1], places=2)
+        #                 return Response(data=err.detail, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        #             try:
+        #                 user.institutes.set(institutes)
+        #                 partner.institutes.set(institutes)
+        #             except Exception as err:
+        #                 inst_recover(institute_one=institutes[0], institute_two=institutes[1], places=2)
+        #                 return Response(data=err, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        #             # TODO: send mail
+        #             # finish with responding the registerd data
+        #
+        #             send_email(registrant_data={"user_firstname": data["user_firstname"],
+        #                                         "user_lastname": data["user_lastname"]},
+        #                        partner_data={"user_firstname": p_f_name,
+        #                                      "user_lastname": p_l_name},
+        #                        registrant_to=data["user_mail"],
+        #                        partner_to=p_mail,
+        #                        status="reg_reg_2")
+        #             serializer = FpFullUserRegistrantSerializer(user)
+        #             return Response(data=serializer.data, status=status.HTTP_200_OK)
+        #
+        #         else:
+        #             err_data = {"error": u"In einem der ausgewählten Institute ist nicht ausreichend Platz."}
+        #             return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+        #
+        #     else:
+        #         # we only register the User
+        #         if institutes[0].places >= 1 and institutes[1] >= 1:
+        #             institutes[0].places -= 1
+        #             institutes[1].places -= 1
+        #             institutes[0].save()
+        #             institutes[1].save()
+        #             try:
+        #                 user = FpUserRegistrant(user_firstname=data["user_firstname"],
+        #                                         user_lastname=data["user_lastname"],
+        #                                         user_login=data["user_login"],
+        #                                         user_mail=data["user_mail"],
+        #                                         user_matrikel=data["user_matrikel"],
+        #                                         notes=data["notes"]
+        #                                         )
+        #                 user.save()
+        #             except (ValueError, IntegrityError) as err:
+        #                 inst_recover(institute_one=institutes[0], institute_two=institutes[1], places=2)
+        #                 return Response(data=err.detail, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        #             try:
+        #                 user.institutes.set(institutes)
+        #             except Exception as err:
+        #                 inst_recover(institute_one=institutes[0], institute_two=institutes[1], places=2)
+        #                 return Response(data=err.detail, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        #
+        #             send_email(registrant_data={"user_firstname": data["user_firstname"],
+        #                                         "user_lastname": data["user_lastname"]},
+        #                        registrant_to=data["user_mail"],
+        #                        status="reg_reg_1")
+        #             serializer = FpFullUserRegistrantSerializer(user)
+        #             return Response(data=serializer.data, status=status.HTTP_200_OK)
+        #
+        #         else:
+        #             err_data = {"error": u"In einem der ausgewählten Institute ist nicht ausreichend Platz."}
+        #             return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+        #
+        # else:
+        #     # since validation was True we register with one institute
+        #     try:
+        #         institutes = check_institute(institute_one=data["institutes"][0])
+        #     except FpInstitute.DoesNotExist:
+        #         err_data = {"error": "Das angegebene Institut existiert nicht."}
+        #         return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+        #     except ValidationError as err:
+        #         return Response(data=err.detail, status=status.HTTP_400_BAD_REQUEST)
+        #
+        #     if data["partner"]:
+        #         if institutes[0].places >= 2:
+        #             institutes[0].places -= 2
+        #             institutes[0].save()
+        #             try:
+        #                 user = FpUserRegistrant(user_firstname=data["user_firstname"],
+        #                                         user_lastname=data["user_lastname"],
+        #                                         user_login=data["user_login"],
+        #                                         user_mail=data["user_mail"],
+        #                                         user_matrikel=data["user_matrikel"],
+        #                                         notes=data["notes"]
+        #                                         )
+        #                 user.save()
+        #                 partner = FpUserPartner(user_firstname=p_f_name,
+        #                                         user_lastname=p_l_name,
+        #                                         user_login=p_login,
+        #                                         user_mail=p_mail,
+        #                                         user_matrikel=p_matrikel,
+        #                                         registrant=user,
+        #                                         notes=data["notes"]
+        #                                         )
+        #                 partner.save()
+        #             except (ValueError, IntegrityError) as err:
+        #                 inst_recover(institute_one=institutes[0], places=1)
+        #                 return Response(data=err.detail, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        #             try:
+        #                 user.institutes.set(institutes)
+        #                 partner.institutes.set(institutes)
+        #             except StandardError as err:
+        #                 inst_recover(institute_one=institutes[0], places=1)
+        #                 return Response(data=err.detail, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        #
+        #             send_email(registrant_data={"user_firstname": data["user_firstname"],
+        #                                         "user_lastname": data["user_lastname"]},
+        #                        partner_data={"user_firstname": p_f_name,
+        #                                      "user_lastname": p_l_name},
+        #                        registrant_to=data["user_mail"],
+        #                        partner_to=p_mail,
+        #                        status="reg_reg_2")
+        #             serializer = FpFullUserRegistrantSerializer(user)
+        #             return Response(data=serializer.data, status=status.HTTP_200_OK)
+        #
+        #         else:
+        #             err_data = {"error": u"In einem der ausgewählten Institute ist nicht ausreichend Platz."}
+        #             return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
+        #     else:
+        #         # we only register the user
+        #         if institutes[0].places >= 1:
+        #             institutes[0].places -= 1
+        #             institutes[0].save()
+        #             try:
+        #                 user = FpUserRegistrant(user_firstname=data["user_firstname"],
+        #                                         user_lastname=data["user_lastname"],
+        #                                         user_login=data["user_login"],
+        #                                         user_mail=data["user_mail"],
+        #                                         user_matrikel=data["user_matrikel"],
+        #                                         notes=data["notes"]
+        #                                         )
+        #                 user.save()
+        #             except (ValueError, IntegrityError) as err:
+        #                 inst_recover(institute_one=institutes[0], places=1)
+        #                 return Response(data=err.detail, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        #             try:
+        #                 user.institutes.set(institutes)
+        #             except StandardError as err:
+        #                 inst_recover(institute_one=institutes[0], places=1)
+        #                 return Response(data=err.detail, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        #
+        #             send_email(registrant_data={"user_firstname": data["user_firstname"],
+        #                                         "user_lastname": data["user_lastname"]},
+        #                        registrant_to=data["user_mail"],
+        #                        status="reg_reg_1")
+        #             serializer = FpFullUserRegistrantSerializer(user)
+        #             return Response(data=serializer.data, status=status.HTTP_200_OK)
+        #
+        #         else:
+        #             err_data = {"error": u"In einem der ausgewählten Institute ist nicht ausreichend Platz."}
+        #             return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
 
                     # validate
 
