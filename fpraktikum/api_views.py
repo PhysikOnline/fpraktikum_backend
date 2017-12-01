@@ -88,7 +88,7 @@ class SetRegistrationView(generics.CreateAPIView):
     serializer_class = FpFullUserRegistrantSerializer
     permission_classes = ()
     # TODO: "override" the create method using super() and adding a Signal call for emails
-    
+
     # def post(self, request, *args, **kwargs):
     #     """
     #     We rewrite the post command since we don't provide serializer like content.
@@ -563,6 +563,7 @@ class SetRegistrationView(generics.CreateAPIView):
                     #     return Response(data=err_data, status=status.HTTP_400_BAD_REQUEST)
                     # this is the old version
 
+    #TODO: this should also go into a serializer like Form
     def delete(self, request, *args, **kwargs):
         """
         Coming soon...
