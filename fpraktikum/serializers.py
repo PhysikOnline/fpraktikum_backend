@@ -13,12 +13,13 @@ class FpInstituteSerializer(serializers.ModelSerializer):
 
         extra_kwargs = {'id': {'read_only': False}}
 
+
 class FpRegistrationSerializer(serializers.ModelSerializer):
     institutes = FpInstituteSerializer(many=True)
 
     class Meta:
         model = FpRegistration
-        fields = ('semester', 'start_date', 'end_date', 'institutes')
+        fields = ('id', 'semester', 'start_date', 'end_date', 'institutes')
 
 
 class FpLessUserPartnerSerializer(serializers.ModelSerializer):
@@ -29,7 +30,7 @@ class FpLessUserPartnerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FpUserPartner
-        fields = ("user_firstname", "user_lastname", "user_matrikel", "has_accepted", "user_mail", "user_login",
+        fields = ('id', "user_firstname", "user_lastname", "user_matrikel", "has_accepted", "user_mail", "user_login",
                   "institutes", "notes")
 
 
@@ -43,7 +44,7 @@ class FpFullUserRegistrantSerializer(serializers.ModelSerializer):
     class Meta:
         model = FpUserRegistrant
         fields = (
-            "user_firstname", "user_lastname", "user_matrikel", "partner_has_accepted", "user_mail", "user_login",
+            "id", "user_firstname", "user_lastname", "user_matrikel", "partner_has_accepted", "user_mail", "user_login",
             "institutes", "partner", "notes")
 
     def create(self, validated_data):
@@ -115,7 +116,7 @@ class FpFullUserRegistrantSerializer(serializers.ModelSerializer):
         :return:
         """
         errors = []
-        if not len(institutes) == 2:
+        if not (len(institutes) == 2):
             errors.append(u"Es wurden mehr als 2 oder keine Institute angegeben {}.".format(institutes))
             raise serializers.ValidationError(errors)# if we do not raise it here the next statements will fail. e.g. only 1 institute
         if institutes[0]["semesterhalf"] == 3 or institutes[1]["semesterhalf"]==3:
@@ -146,7 +147,7 @@ class FpLessUserRegistrantSerializer(serializers.ModelSerializer):
     class Meta:
         model = FpUserRegistrant
         fields = (
-            "user_firstname", "user_lastname", "user_matrikel", "partner_has_accepted", "user_mail", "user_login",
+            'id', "user_firstname", "user_lastname", "user_matrikel", "partner_has_accepted", "user_mail", "user_login",
             "institutes", "notes")
 
 
@@ -156,7 +157,7 @@ class FpFullUserPartnerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FpUserPartner
-        fields = ("user_firstname", "user_lastname", "user_matrikel", "has_accepted", "user_mail", "user_login",
+        fields = ('id', "user_firstname", "user_lastname", "user_matrikel", "has_accepted", "user_mail", "user_login",
                   "institutes", "registrant", "notes")
 
 
