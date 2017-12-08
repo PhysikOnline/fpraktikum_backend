@@ -14,7 +14,7 @@ from fpraktikum.utils import get_semester, send_email
 from .serializers import *
 
 
-class RegistrationView(generics.RetrieveAPIView):
+class RegistrationView(ModelViewSet):
     queryset = FpRegistration.objects.all()
     serializer_class = FpRegistrationSerializer
     name = 'registration'

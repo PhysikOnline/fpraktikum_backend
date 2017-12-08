@@ -11,7 +11,10 @@ class FpInstituteSerializer(serializers.ModelSerializer):
         model = FpInstitute
         fields = ('id', 'name', 'places', 'graduation', 'semesterhalf')
 
-        extra_kwargs = {'id': {'read_only': False}}
+        extra_kwargs = {'id': {'read_only': False,
+                               'required': False
+                               }
+                        }
 
 
 class FpRegistrationSerializer(serializers.ModelSerializer):
@@ -20,6 +23,28 @@ class FpRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = FpRegistration
         fields = ('id', 'semester', 'start_date', 'end_date', 'institutes')
+
+    def create(self, validated_data):
+        institutes = validated_data.pop('institutes')
+
+        registration = FpRegistration.objects.create(**validated_data)
+
+        for inst in institutes:
+            i = FpInstitute.objects.create(**inst, registration=registration)
+
+        return registration
+
+    def update(self, instance, validated_data):
+
+        # update institutes
+        institutes = validated_data.pop("institutes")
+        for institute in institutes:
+            inst = instance.institutes.get(pk=institute['id'])
+            seri = FpInstituteSerializer(data=institute)
+            seri.is_valid(raise_exception=True)
+            seri.update(inst, seri.validated_data)
+
+        return super(FpRegistrationSerializer, self).update(instance, validated_data)
 
 
 class FpLessUserPartnerSerializer(serializers.ModelSerializer):
@@ -129,7 +154,7 @@ class FpFullUserRegistrantSerializer(serializers.ModelSerializer):
         for inst in institutes:
             try:
                 FpInstitute.objects.get(pk=inst["id"])
-            except FpInstitute.DoesNoExist:
+            except FpInstitute.DoesNotExist:
                 errors.append(u"Das Institut {}, existiert nicht.".format(inst["name"]))
 
         if errors:
