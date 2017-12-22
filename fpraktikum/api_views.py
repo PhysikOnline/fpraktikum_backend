@@ -9,7 +9,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from fpraktikum.db_utils import il_db_retrieve, check_institute, inst_recover
+from fpraktikum.db_utils import il_db_retrieve, check_institute, inst_recover, is_user_valid
 from fpraktikum.utils import get_semester, send_email
 from .serializers import *
 
@@ -94,6 +94,7 @@ class UserRegistrantViewset(ModelViewSet):
     permission_classes = ()
 
     #for now we do not need a PUT
+
     def update(self, request, *args, **kwargs):
         return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
 
@@ -671,7 +672,7 @@ class CheckPartnerView(views.APIView):
         if not partner_data:
             return Response(status=status.HTTP_200_OK)
 
-        check = check_user(login=data["user_login"])
+        check = is_user_valid(login=data["user_login"])
 
         if check["status"]:
             resp_data = check["data"]
