@@ -37,12 +37,18 @@ class FpRegistrationSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
 
         # update institutes
-        institutes = validated_data.pop("institutes")
-        for institute in institutes:
-            inst = instance.institutes.get(pk=institute['id'])
-            seri = FpInstituteSerializer(data=institute)
-            seri.is_valid(raise_exception=True)
-            seri.update(inst, seri.validated_data)
+
+        instututes = {}
+
+        if "institutes" in validated_data:
+
+            institutes = validated_data.pop("institutes")
+
+            for institute in institutes:
+                inst = instance.institutes.get(pk=institute['id'])
+                seri = FpInstituteSerializer(data=institute)
+                seri.is_valid(raise_exception=True)
+                seri.update(inst, seri.validated_data)
 
         return super(FpRegistrationSerializer, self).update(instance, validated_data)
 
