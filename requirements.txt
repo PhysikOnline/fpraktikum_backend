@@ -1,5 +1,5 @@
 # Bleeding edge Django
-Django>=1.8
+Django=1.8
 gunicorn>=19.7
 
 # Configuration
@@ -53,3 +53,6 @@ django-rest-swagger==2.1.2
 
 # CORS Headers
 django-cors-headers == 2.0.0
+
+# Advanced testing
+pytest ==3.3.1
