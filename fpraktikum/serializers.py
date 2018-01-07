@@ -4,6 +4,8 @@ from fpraktikum.models import FpInstitute, FpUserRegistrant, FpUserPartner, FpWa
 
 from fpraktikum.db_utils import il_db_retrieve, is_user_valid
 
+from fpraktikum.utils import send_email
+
 
 class FpInstituteSerializer(serializers.ModelSerializer):
 
@@ -100,7 +102,7 @@ class FpFullUserRegistrantSerializer(serializers.ModelSerializer):
 
             if partner:
                 partner.institutes.add(inst)
-
+        send_email(user, "reg_reg")
         return user
 
     def validate(self, data):

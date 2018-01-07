@@ -3,6 +3,8 @@ from datetime import datetime
 from django.core.mail import EmailMessage
 from django.template.loader import get_template
 
+import fpraktikum.models
+
 """
 This File is for Custom helper functions
 """
@@ -27,7 +29,7 @@ def get_semester():
     return semester
 
 
-def send_email(registrant_data={}, partner_data={}, registrant_to=None, partner_to=None, status=None):
+def send_email(data_serializer, status):
     """
 
     status_options = {"register": ("register", "delete"),
@@ -35,7 +37,7 @@ def send_email(registrant_data={}, partner_data={}, registrant_to=None, partner_
                       "waitlist": ("register", "delete"),
                       }
     for overview.
-
+    :param data_serializer : Serializer instance
     :param registrant_data:
     :param partner_data:
     :param registrant_to:
@@ -43,11 +45,11 @@ def send_email(registrant_data={}, partner_data={}, registrant_to=None, partner_
     :param status: ("KEY" OF STATUS OPTIONS , "VALUE" OF STATUS OPTIONS )
     :return:
     """
-    data = ((registrant_data, registrant_to), (partner_data, partner_to))
-    templates = {"reg_reg_1": ["fpraktikum/email/registration_registrant.html",
+
+    templates = {"reg_reg": ["fpraktikum/email/registration_registrant.html",
                                ],
 
-                 "reg_del_1": ["fpraktikum/email/registration_delete_registrant.html",
+                 "reg_del": ["fpraktikum/email/registration_delete_registrant.html",
                                ],
                  "reg_del_partner": ["fpraktikum/email/registration_delete_partner.html",
                                      "fpraktikum/email/registration_partner_has_deleted.html"],
@@ -75,10 +77,41 @@ def send_email(registrant_data={}, partner_data={}, registrant_to=None, partner_
                  }
     subject = "Fortgeschrittenen Praktikum"
     from_email = "elearning@itp.uni-frankfurt.de"
+
+    registrant_data = {
+        "user_firstname":data_serializer.user_firstname,
+        "user_lastname": data_serializer.user_lastname,
+    }
+
+    registrant_to = data_serializer.user_mail
+
+    context_data = ((registrant_data, registrant_to), )
+
+    try:
+        partner = data_serializer.partner
+    except fpraktikum.models.FpUserPartner.DoesNotExist:
+        partner = None
+    else:
+        partner_data = {
+            "user_firstname": partner.user_firstname,
+            "user_lastname": partner.user_lastname,
+            "registrant_firstname": data_serializer.user_firstname,
+            "registrant_lastname": data_serializer.user_lastname
+
+        }
+
+        partner_to = data_serializer.partner.user_mail
+
+        context_data += ((partner_data, partner_to),)
+
+        if status == "reg_reg" or status == "reg_del":
+            status += "_2"
+
     index = 0
+
     for tmp in templates[status]:
-        context = data[index][0]
-        to_mail = [data[index][1], ]
+        context = context_data[index][0]
+        to_mail = [context_data[index][1], ]
 
         message = get_template(tmp).render(context)
         mail = EmailMessage(subject, message, to=to_mail, from_email=from_email)
