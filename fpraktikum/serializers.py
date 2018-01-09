@@ -102,7 +102,7 @@ class FpFullUserRegistrantSerializer(serializers.ModelSerializer):
 
             if partner:
                 partner.institutes.add(inst)
-        send_email(user, "reg_reg")
+
         return user
 
     def validate(self, data):

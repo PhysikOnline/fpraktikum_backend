@@ -8,7 +8,7 @@ from fpraktikum.models import FpUserRegistrant, FpUserPartner, FpWaitlist
 #from fpraktikum.serializers import (FpFullUserPartnerSerializer, FpFullUserRegistrantSerializer, FpWaitlistSerializer)
 
 
-def il_db_retrieve(user_lastname, user_login, user_matrikel=None, user_firstname=None, user_mail=None):
+def il_db_retrieve(user_lastname, user_login):
     """
 
     A Helper function to acces the ILIAS-DB and check wether a user has signed up at

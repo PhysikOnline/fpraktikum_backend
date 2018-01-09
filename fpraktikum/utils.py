@@ -46,35 +46,48 @@ def send_email(data_serializer, status):
     :return:
     """
 
-    templates = {"reg_reg": ["fpraktikum/email/registration_registrant.html",
-                               ],
+    templates = {
+        # Mail for Single user Registration
+        "reg_reg": ["fpraktikum/email/registration_registrant.html",
+                    ],
 
-                 "reg_del": ["fpraktikum/email/registration_delete_registrant.html",
-                               ],
-                 "reg_del_partner": ["fpraktikum/email/registration_delete_partner.html",
-                                     "fpraktikum/email/registration_partner_has_deleted.html"],
-                 "reg_del_partner_stays": ["fpraktikum/email/registration_delete_registrant.html",
-                                           "fpraktikum/email/registration_partner_has_deleted.html",
-                                           ],
+        # Mail for Singel user Deletion
+        "reg_del": ["fpraktikum/email/registration_delete_registrant.html",
+                    ],
 
-                 "reg_reg_2": ["fpraktikum/email/registration_registrant.html",
-                               "fpraktikum/email/registration_partner.html"],
+        # Mails if Partner has deleted and Registrant stays
+        "reg_del_partner": ["fpraktikum/email/registration_partner_has_deleted.html",
+                            "fpraktikum/email/registration_delete_partner.html"],
 
-                 "reg_del_2": ["fpraktikum/email/registration_delete_registrant.html",
-                               "fpraktikum/email/registration_delete_partner.html"],
-
-                 "waitlist_reg": ["fpraktikum/email/waitlist_register.html",
+        # Mail if Registrant deletes but his Partner stays
+        "reg_del_partner_stays": ["fpraktikum/email/registration_delete_registrant.html",
+                                  "fpraktikum/email/registration_partner_has_deleted.html",
                                   ],
 
-                 "waitlist_del": ["fpraktikum/email/waitlist_delete.html",
-                                  ],
+        # Mail for double Registration
+        "reg_reg_2": ["fpraktikum/email/registration_registrant.html",
+                      "fpraktikum/email/registration_partner.html"],
 
-                 "accept_acc": ["fpraktikum/email/accept_registrant.html",
-                                "fpraktikum/email/accept_partner.html"],
+        # Mail for double Deletion
+        "reg_del_2": ["fpraktikum/email/registration_delete_registrant.html",
+                      "fpraktikum/email/registration_delete_partner.html"],
 
-                 "accept_dec": ["fpraktikum/email/accept_registrant_decline.html",
-                                "fpraktikum/email/accept_partner_decline.html"],
-                 }
+        # Mail for Waitlistregistration
+        "waitlist_reg": ["fpraktikum/email/waitlist_register.html",
+                         ],
+
+        # Mail for Waitlist deletion
+        "waitlist_del": ["fpraktikum/email/waitlist_delete.html",
+                         ],
+
+        # Mail if partner accapts Partnership
+        "accept_acc": ["fpraktikum/email/accept_registrant.html",
+                       "fpraktikum/email/accept_partner.html"],
+
+        # Mail if partner declines Partnership
+        "accept_dec": ["fpraktikum/email/accept_registrant_decline.html",
+                       "fpraktikum/email/accept_partner_decline.html"],
+    }
     subject = "Fortgeschrittenen Praktikum"
     from_email = "elearning@itp.uni-frankfurt.de"
 

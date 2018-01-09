@@ -93,20 +93,26 @@ class UserRegistrantViewset(ModelViewSet):
     serializer_class = FpFullUserRegistrantSerializer
     permission_classes = ()
 
-    #for now we do not need a PUT
-
-    def update(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
+    def perform_create(self, serializer):
+        user = serializer.save()
+        send_email(user, "reg_reg")
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
 
         if not instance.partner_has_accepted:   # if a Partner doesn't exist or hasn't accepted yet delete both
-            places = 2 if instance.partner else 1
+
+            try:
+                instance.partner
+            except FpUserPartner.DoesNotExist:
+                places = 1
+            else:
+                places = 2
+
             for inst in instance.institutes.all():
                 inst.places += places
                 inst.save()
-
+            send_email(instance, "reg_del")
             self.perform_destroy(instance)
             return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -122,7 +128,13 @@ class UserRegistrantViewset(ModelViewSet):
             inst.save()
 
         self.perform_destroy(instance)
+        send_email(instance, "reg_del_partner_stays")
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    # for now we do not need a PUT
+
+    def update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
 
     def retrieve(self, request, *args, **kwargs):
         return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
@@ -556,14 +568,34 @@ class UserPartnerViewset(ModelViewSet):
         instance.registrant.partner_has_accepted = True
         instance.registrant.save()
 
+        send_email(instance.registrant.get(), "accept_acc")
         return Response(data=serializer(instance).data)
 
     def destroy(self, request, *args, **kwargs):
+        """
+        This method is used to Decline a Partnership or to delete a Partner.
+
+
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
         instance = self.get_object()
+        mail_str ="accept_dec"  # we use a mail_string since this method
+                                # will also be called when declineing the Partnership
+
+        if instance.has_accepted:
+            instance.registrant.partner_has_accepted = False
+            instance.registrant.save()
+            mail_str = "reg_del_partner"
+
         for inst in instance.institutes.all():
             inst.places += 1
             inst.save()
+
         self.perform_destroy(instance)
+        send_email(instance.registrant, mail_str)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def retrieve(self, request, *args, **kwargs):
@@ -650,39 +682,58 @@ class UserPartnerViewset(ModelViewSet):
     #         return Response(status=status.HTTP_200_OK)
 
 
-#this is already covered in the rewritten UserCheckView
-class CheckPartnerView(views.APIView):
+class CheckPartnerView(generics.RetrieveAPIView):
     name = "check_partner"
+
     serializer_class = CheckPartnerSerializer
     queryset = FpUserPartner.objects.all()
 
     def get(self, request, *args, **kwargs):
 
-        data = request.GET
-        resp_data = {}
-        try:
+        login = request.query_params.get("user_login")
+        last_name = request.query_params.get("user_lastname")
 
-            self.serializer_class().run_validation(data=data)
+        serializer = self.get_serializer()
 
-        except ValidationError as err:
-            return Response(data=err.detail, status=status.HTTP_400_BAD_REQUEST)
+        user_legal = il_db_retrieve(user_lastname=last_name, user_login=login)  # will store the needed data or None
 
-        partner_data = il_db_retrieve(user_lastname=data["user_lastname"], user_login=data["user_login"])
+        if not user_legal:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        if not partner_data:
-            return Response(status=status.HTTP_200_OK)
+        if not is_user_valid(login=login):
+            # User is registered
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        check = is_user_valid(login=data["user_login"])
+        # User is leagl and not registered
+        return Response(user_legal)
 
-        if check["status"]:
-            resp_data = check["data"]
-            resp_data["status"] = check["status"]
-            return Response(data=resp_data, status=status.HTTP_200_OK)
 
-        else:
-            resp_data = partner_data
-            resp_data["status"] = check["status"]
-            return Response(data=resp_data, status=status.HTTP_200_OK)
+        #
+        # data = request.GET
+        # resp_data = {}
+        # try:
+        #
+        #     self.serializer_class().run_validation(data=data)
+        #
+        # except ValidationError as err:
+        #     return Response(data=err.detail, status=status.HTTP_400_BAD_REQUEST)
+        #
+        # partner_data = il_db_retrieve(user_lastname=data["user_lastname"], user_login=data["user_login"])
+        #
+        # if not partner_data:
+        #     return Response(status=status.HTTP_200_OK)
+        #
+        # check = is_user_valid(login=data["user_login"])
+        #
+        # if check["status"]:
+        #     resp_data = check["data"]
+        #     resp_data["status"] = check["status"]
+        #     return Response(data=resp_data, status=status.HTTP_200_OK)
+        #
+        # else:
+        #     resp_data = partner_data
+        #     resp_data["status"] = check["status"]
+        #     return Response(data=resp_data, status=status.HTTP_200_OK)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -691,6 +742,23 @@ class WaitlistView(ModelViewSet):
     serializer_class = FpWaitlistSerializer
     queryset = FpWaitlist.objects.all()
     permission_classes = ()
+
+    def perform_create(self, serializer):
+        user = serializer.save()
+        send_email(user, "waitlist_reg")
+
+    def perform_destroy(self, instance):
+        send_email(instance, "waitlist_del")
+        instance.delete()
+
+    def list(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
+
+    def update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
 
     # def post(self, request, *args, **kwargs):
     #
