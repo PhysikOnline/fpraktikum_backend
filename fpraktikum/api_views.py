@@ -213,7 +213,7 @@ class UserPartnerViewset(ModelViewSet):
 class CheckPartnerView(generics.RetrieveAPIView):
     name = "check_partner"
 
-    serializer_class = CheckPartnerSerializer
+    serializer_class = DummySerializer
     queryset = FpUserPartner.objects.all()
 
     def get(self, request, *args, **kwargs):
