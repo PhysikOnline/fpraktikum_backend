@@ -48,7 +48,7 @@ class UserCheckView(generics.RetrieveAPIView):
                   "waitlist": (FpWaitlist, FpWaitlistSerializer),
                   }
         data = {"status": None}
-        for k, v in models.items():
+        for k, v in list(models.items()):
             try:
                 user = v[0].objects.get(user_login=login)
 

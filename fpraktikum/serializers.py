@@ -135,7 +135,7 @@ class FpFullUserRegistrantSerializer(serializers.ModelSerializer):
         for institute in data["institutes"]:
             inst = FpInstitute.objects.get(pk=institute["id"])
             if inst.places < places_needed:
-                errors.append(u"Im Institut {} stehen nicht mehr genügend Plätze zur Verfügung".format(inst.name))
+                errors.append("Im Institut {} stehen nicht mehr genügend Plätze zur Verfügung".format(inst.name))
 
         if errors:
             raise serializers.ValidationError(errors)
@@ -150,20 +150,20 @@ class FpFullUserRegistrantSerializer(serializers.ModelSerializer):
         """
         errors = []
         if not (len(institutes) == 2):
-            errors.append(u"Es wurden mehr als 2 oder keine Institute angegeben {}.".format(institutes))
+            errors.append("Es wurden mehr als 2 oder keine Institute angegeben {}.".format(institutes))
             raise serializers.ValidationError(errors) # if we do not raise it here the next statements will fail. e.g. only 1 institute
         if institutes[0]["semesterhalf"] == 3 or institutes[1]["semesterhalf"]==3:
-            errors.append(u"Eines der Institute wird für beide Semesterhälften belegt, bitte wähle nur dieses aus.")
+            errors.append("Eines der Institute wird für beide Semesterhälften belegt, bitte wähle nur dieses aus.")
         if institutes[0]["name"] == institutes[1]["name"]:
-            errors.append(u"Es müssen 2 unterschiedliche Institute ausgewählt werden.")
+            errors.append("Es müssen 2 unterschiedliche Institute ausgewählt werden.")
         if not institutes[0]["graduation"] == institutes[1]["graduation"]:
-            errors.append(u"Es müssen Institute mit dem gleichen Abschluss gewählt werden.")
+            errors.append("Es müssen Institute mit dem gleichen Abschluss gewählt werden.")
 
         for inst in institutes:
             try:
                 FpInstitute.objects.get(pk=inst["id"])
             except FpInstitute.DoesNotExist:
-                errors.append(u"Das Institut {}, existiert nicht.".format(inst["name"]))
+                errors.append("Das Institut {}, existiert nicht.".format(inst["name"]))
 
         if errors:
             raise serializers.ValidationError(errors)
