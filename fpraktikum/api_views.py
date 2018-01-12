@@ -32,6 +32,7 @@ class RegistrationView(ModelViewSet):
 class UserCheckView(generics.RetrieveAPIView):
     name = 'user'
     lookup_field = 'user_login'
+    serializer_class = DummySerializer
     queryset = FpUserRegistrant.objects.all()
     permission_classes = ()
 

@@ -205,6 +205,10 @@ class CheckPartnerSerializer(serializers.Serializer):
     user_login = serializers.CharField()
 
 
+class DummySerializer(serializers.Serializer):
+    pass
+
+
 # class InstituteSerializer(serializers.Serializer):
 #     name = serializers.CharField()
 #     graduation = serializers.CharField()

@@ -20,5 +20,5 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include("fpraktikum.api_urls", namespace="api")),
-    url(r'^docs/',include("docs.api_docs"))
+    url(r'^docs/', include("docs.api_docs"))
 ]
