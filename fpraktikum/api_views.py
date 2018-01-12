@@ -16,11 +16,10 @@ from .serializers import *
 
 @method_decorator(csrf_exempt, name='dispatch')
 class RegistrationView(ModelViewSet):
+    name = 'registration'
     queryset = FpRegistration.objects.all()
     serializer_class = FpRegistrationSerializer
     permission_classes = ()
-    name = 'registration'
-    lookup_field = "semester"
 
 
     def get_object(self):
