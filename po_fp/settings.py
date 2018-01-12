@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'corsheaders',
-    'rest_framework_swagger',
+    'drf_yasg',
     'import_export',
 ]
 
@@ -230,8 +230,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES':
         ['rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'],
     'DEFAULT_RENDERER_CLASSES':
-        ('rest_framework.renderers.JSONRenderer',
-         'rest_framework.renderers.BrowsableAPIRenderer',),
+        ('rest_framework.renderers.JSONRenderer',),
     'TEST_REQUEST_DEFAULT_FORMAT':
         'json',
 }

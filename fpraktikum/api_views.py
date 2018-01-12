@@ -14,11 +14,14 @@ from fpraktikum.utils import get_semester, send_email
 from .serializers import *
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class RegistrationView(ModelViewSet):
     queryset = FpRegistration.objects.all()
     serializer_class = FpRegistrationSerializer
+    permission_classes = ()
     name = 'registration'
-    lookup_field = None
+    lookup_field = "semester"
+
 
     def get_object(self):
         current_semester = get_semester()
@@ -31,6 +34,7 @@ class UserCheckView(generics.RetrieveAPIView):
     name = 'user'
     lookup_field = 'user_login'
     queryset = FpUserRegistrant.objects.all()
+    permission_classes = ()
 
     def get(self, request, *args, **kwargs):
         """
@@ -141,8 +145,6 @@ class UserRegistrantViewset(ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
-
-
 
     # TODO: "override" the create method using super() and adding a Signal call for emails
     
@@ -541,7 +543,6 @@ class UserRegistrantViewset(ModelViewSet):
     #                            status="reg_del_1")
     #             return Response(data={"message": u"Die Anmeldung wurde erfolgreich gelöscht."},
     #                             status=status.HTTP_200_OK)
-
 
 @method_decorator(csrf_exempt, name='dispatch')
 class UserPartnerViewset(ModelViewSet):
