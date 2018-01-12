@@ -3,11 +3,12 @@
 from rest_framework.exceptions import ValidationError
 
 from fpraktikum.ilias_model import UsrData
-from fpraktikum.models import FpUserRegistrant, FpUserPartner, FpWaitlist, FpInstitute
-from fpraktikum.serializers import (FpFullUserPartnerSerializer, FpFullUserRegistrantSerializer, FpWaitlistSerializer)
+from fpraktikum.models import FpUserRegistrant, FpUserPartner, FpWaitlist
+#from fpraktikum.models import FpUserRegistrant, FpUserPartner, FpWaitlist, FpInstitute
+#from fpraktikum.serializers import (FpFullUserPartnerSerializer, FpFullUserRegistrantSerializer, FpWaitlistSerializer)
 
 
-def il_db_retrieve(user_lastname, user_login, user_matrikel=None, user_firstname=None, user_mail=None):
+def il_db_retrieve(user_lastname, user_login):
     """
 
     A Helper function to acces the ILIAS-DB and check wether a user has signed up at
@@ -18,72 +19,67 @@ def il_db_retrieve(user_lastname, user_login, user_matrikel=None, user_firstname
     :return: bolean True/False
     """
 
-    if user_firstname and user_mail and user_matrikel:
-        try:
-            user = UsrData.objects.using('ilias_db').get(firstname=user_firstname, lastname=user_lastname,
-                                                         login=user_login, email=user_mail)
-        except UsrData.DoesNotExist:
-            return None
-        else:
-            data = {"user_firstname": user_firstname,
-                    "user_lastname": user_lastname,
-                    "user_login": user_login,
-                    "user_mail": user_mail,
-                    "user_matrikel": user_matrikel
-                    }
-            return data
+    try:
+        user = UsrData.objects.using('ilias_db').get(lastname=user_lastname, login=user_login)
+    except UsrData.DoesNotExist:
+        return None
     else:
+        data = {"user_firstname": user.firstname,
+                "user_lastname": user.lastname,
+                "user_login": user.login,
+                "user_mail": user.email,
+                "user_matrikel": user.matriculation
+                }
+        return data
+
+
+def is_user_valid(login):
+
+    models = (FpUserRegistrant, FpUserPartner, FpWaitlist)
+
+    for m in models:
         try:
-            user = UsrData.objects.using('ilias_db').get(lastname=user_lastname, login=user_login)
-        except UsrData.DoesNotExist:
-            return None
-        else:
-            data = {"user_firstname": user.firstname,
-                    "user_lastname": user.lastname,
-                    "user_login": user.login,
-                    "user_mail": user.email,
-                    "user_matrikel": user.matriculation
-                    }
-            return data
-            # try:
-            #     query = UsrData.objects.using('ilias_db').get(firstname=user_firstname, lastname=user_lastname,
-            #                                                   login=user_login, email=user_mail)
-            #
-            # except UsrData.DoesNotExist:
-            #     return False
-            #
-            # return query.usr_id
-
-
-def check_user(login):
-    """
-    This function will provide the current registration status of the student.
-
-    :param login: <str>
-    :param semester:  <str>
-    :return: Data of the student in the context of the Fpraktikum Registration
-    """
-
-    models = {"registrant": (FpUserRegistrant, FpFullUserRegistrantSerializer),
-              "partner": (FpUserPartner, FpFullUserPartnerSerializer),
-              "waitlist": (FpWaitlist, FpWaitlistSerializer),
-              }
-    return_value = {"data": {},
-                    "status": None,
-                    }
-    for k, v in models.iteritems():
-        try:
-            user = v[0].objects.get(user_login=login)
-
-        except v[0].DoesNotExist:
+            m.objects.get(user_login=login)
+        except m.DoesNotExist:
             pass
-
         else:
-            return_value = {"data": v[1](user).data,
-                            "status": k,
-                            }
+            return False
 
-    return return_value
+    return True
+
+# no longer needed
+
+# def check_user(login):
+#     """
+#     This function will provide the current registration status of the student.
+#
+#     :param login: <str>
+#     :param semester:  <str>
+#     :return: Data of the student in the context of the Fpraktikum Registration
+#     """
+#
+#     import fpraktikum.serializers
+#
+#     models = {"registrant": (FpUserRegistrant, fpraktikum.serializers.FpFullUserRegistrantSerializer),
+#               "partner": (FpUserPartner, fpraktikum.serializers.FpFullUserPartnerSerializer),
+#               "waitlist": (FpWaitlist, fpraktikum.serializers.FpWaitlistSerializer),
+#               }
+#     return_value = {"data": {},
+#                     "status": None,
+#                     }
+#     for k, v in models.items():
+#         try:
+#             user = v[0].objects.get(user_login=login)
+#
+#         except v[0].DoesNotExist:
+#             pass
+#
+#         else:
+#             return_value = {"data": v[1](user).data,
+#                             "status": k,
+#                             }
+#
+#     return return_value
 
 
 def check_institute(institute_one, institute_two=None):

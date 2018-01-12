@@ -3,6 +3,8 @@ from datetime import datetime
 from django.core.mail import EmailMessage
 from django.template.loader import get_template
 
+import fpraktikum.models
+
 """
 This File is for Custom helper functions
 """
@@ -27,7 +29,7 @@ def get_semester():
     return semester
 
 
-def send_email(registrant_data={}, partner_data={}, registrant_to=None, partner_to=None, status=None):
+def send_email(data_serializer, status):
     """
 
     status_options = {"register": ("register", "delete"),
@@ -35,7 +37,7 @@ def send_email(registrant_data={}, partner_data={}, registrant_to=None, partner_
                       "waitlist": ("register", "delete"),
                       }
     for overview.
-
+    :param data_serializer : Serializer instance
     :param registrant_data:
     :param partner_data:
     :param registrant_to:
@@ -43,42 +45,86 @@ def send_email(registrant_data={}, partner_data={}, registrant_to=None, partner_
     :param status: ("KEY" OF STATUS OPTIONS , "VALUE" OF STATUS OPTIONS )
     :return:
     """
-    data = ((registrant_data, registrant_to), (partner_data, partner_to))
-    templates = {"reg_reg_1": ["fpraktikum/email/registration_registrant.html",
-                               ],
 
-                 "reg_del_1": ["fpraktikum/email/registration_delete_registrant.html",
-                               ],
-                 "reg_del_partner": ["fpraktikum/email/registration_delete_partner.html",
-                                     "fpraktikum/email/registration_partner_has_deleted.html"],
-                 "reg_del_partner_stays": ["fpraktikum/email/registration_delete_registrant.html",
-                                           "fpraktikum/email/registration_partner_has_deleted.html",
-                                           ],
+    templates = {
+        # Mail for Single user Registration
+        "reg_reg": ["fpraktikum/email/registration_registrant.html",
+                    ],
 
-                 "reg_reg_2": ["fpraktikum/email/registration_registrant.html",
-                               "fpraktikum/email/registration_partner.html"],
+        # Mail for Singel user Deletion
+        "reg_del": ["fpraktikum/email/registration_delete_registrant.html",
+                    ],
 
-                 "reg_del_2": ["fpraktikum/email/registration_delete_registrant.html",
-                               "fpraktikum/email/registration_delete_partner.html"],
+        # Mails if Partner has deleted and Registrant stays
+        "reg_del_partner": ["fpraktikum/email/registration_partner_has_deleted.html",
+                            "fpraktikum/email/registration_delete_partner.html"],
 
-                 "waitlist_reg": ["fpraktikum/email/waitlist_register.html",
+        # Mail if Registrant deletes but his Partner stays
+        "reg_del_partner_stays": ["fpraktikum/email/registration_delete_registrant.html",
+                                  "fpraktikum/email/registration_partner_has_deleted.html",
                                   ],
 
-                 "waitlist_del": ["fpraktikum/email/waitlist_delete.html",
-                                  ],
+        # Mail for double Registration
+        "reg_reg_2": ["fpraktikum/email/registration_registrant.html",
+                      "fpraktikum/email/registration_partner.html"],
 
-                 "accept_acc": ["fpraktikum/email/accept_registrant.html",
-                                "fpraktikum/email/accept_partner.html"],
+        # Mail for double Deletion
+        "reg_del_2": ["fpraktikum/email/registration_delete_registrant.html",
+                      "fpraktikum/email/registration_delete_partner.html"],
 
-                 "accept_dec": ["fpraktikum/email/accept_registrant_decline.html",
-                                "fpraktikum/email/accept_partner_decline.html"],
-                 }
+        # Mail for Waitlistregistration
+        "waitlist_reg": ["fpraktikum/email/waitlist_register.html",
+                         ],
+
+        # Mail for Waitlist deletion
+        "waitlist_del": ["fpraktikum/email/waitlist_delete.html",
+                         ],
+
+        # Mail if partner accapts Partnership
+        "accept_acc": ["fpraktikum/email/accept_registrant.html",
+                       "fpraktikum/email/accept_partner.html"],
+
+        # Mail if partner declines Partnership
+        "accept_dec": ["fpraktikum/email/accept_registrant_decline.html",
+                       "fpraktikum/email/accept_partner_decline.html"],
+    }
     subject = "Fortgeschrittenen Praktikum"
     from_email = "elearning@itp.uni-frankfurt.de"
+
+    registrant_data = {
+        "user_firstname":data_serializer.user_firstname,
+        "user_lastname": data_serializer.user_lastname,
+    }
+
+    registrant_to = data_serializer.user_mail
+
+    context_data = ((registrant_data, registrant_to), )
+
+    try:
+        partner = data_serializer.partner
+    except fpraktikum.models.FpUserPartner.DoesNotExist:
+        partner = None
+    else:
+        partner_data = {
+            "user_firstname": partner.user_firstname,
+            "user_lastname": partner.user_lastname,
+            "registrant_firstname": data_serializer.user_firstname,
+            "registrant_lastname": data_serializer.user_lastname
+
+        }
+
+        partner_to = data_serializer.partner.user_mail
+
+        context_data += ((partner_data, partner_to),)
+
+        if status == "reg_reg" or status == "reg_del":
+            status += "_2"
+
     index = 0
+
     for tmp in templates[status]:
-        context = data[index][0]
-        to_mail = [data[index][1], ]
+        context = context_data[index][0]
+        to_mail = [context_data[index][1], ]
 
         message = get_template(tmp).render(context)
         mail = EmailMessage(subject, message, to=to_mail, from_email=from_email)
