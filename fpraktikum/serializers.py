@@ -197,12 +197,6 @@ class FpFullUserPartnerSerializer(serializers.ModelSerializer):
 class FpWaitlistSerializer(serializers.ModelSerializer):
     class Meta:
         model = FpWaitlist
-        fields = '__all__'
-
-
-class CheckPartnerSerializer(serializers.Serializer):
-    user_lastname = serializers.CharField()
-    user_login = serializers.CharField()
 
 
 class DummySerializer(serializers.Serializer):

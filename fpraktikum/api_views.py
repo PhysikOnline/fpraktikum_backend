@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, status, views
-from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from fpraktikum.db_utils import il_db_retrieve, check_institute, inst_recover, is_user_valid
+
 from fpraktikum.utils import get_semester, send_email
 from .serializers import *
 
@@ -20,7 +18,6 @@ class RegistrationView(ModelViewSet):
     queryset = FpRegistration.objects.all()
     serializer_class = FpRegistrationSerializer
     permission_classes = ()
-
 
     def get_object(self):
         current_semester = get_semester()
