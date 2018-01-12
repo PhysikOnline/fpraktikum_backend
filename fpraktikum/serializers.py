@@ -92,7 +92,7 @@ class FpFullUserRegistrantSerializer(serializers.ModelSerializer):
         if partner_data:
             del partner_data["institutes"]
 
-            partner = FpUserPartner.objects.create(**partner_data, registrant=user)
+            partner = FpUserPartner.objects.create(registrant=user, **partner_data)
 
         for i in institutes:
             inst = FpInstitute.objects.get(id=i['id'])
