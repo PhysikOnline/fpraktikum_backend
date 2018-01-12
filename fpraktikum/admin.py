@@ -44,9 +44,6 @@ admin.site.register(FpRegistration, FpRegistrationAdmin)
 
 
 class RegistrantResource(resources.ModelResource):
-    # partner__user_firstname = fields.Field(column_name="partner firstname")
-    # partner__user_lastname = fields.Field(column_name="partner lastname")
-    # partner__user_matrikel = fields.Field(column_name="partner matrikel")
     institute_semesterhalf = fields.Field()
     institute_graduation = fields.Field()
 

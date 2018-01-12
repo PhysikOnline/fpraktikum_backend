@@ -197,70 +197,8 @@ class FpFullUserPartnerSerializer(serializers.ModelSerializer):
 class FpWaitlistSerializer(serializers.ModelSerializer):
     class Meta:
         model = FpWaitlist
-        fields = '__all__'
-
-
-class CheckPartnerSerializer(serializers.Serializer):
-    user_lastname = serializers.CharField()
-    user_login = serializers.CharField()
 
 
 class DummySerializer(serializers.Serializer):
     pass
 
-
-# class InstituteSerializer(serializers.Serializer):
-#     name = serializers.CharField()
-#     graduation = serializers.CharField()
-#     semesterhalf = serializers.IntegerField()
-#
-#
-# class PartnerSerializer(serializers.Serializer):
-#     user_firstname = serializers.CharField()
-#     user_lastname = serializers.CharField()
-#     user_login = serializers.CharField()
-#     user_mail = serializers.EmailField()
-#     user_matrikel = serializers.CharField()
-#
-#
-# class RegistrationSerializer(serializers.Serializer):
-#     user_firstname = serializers.CharField()
-#     user_lastname = serializers.CharField()
-#     user_login = serializers.CharField()
-#     user_mail = serializers.EmailField()
-#     user_matrikel = serializers.CharField()
-#     institutes = InstituteSerializer(many=True)
-#     partner = PartnerSerializer(required=False, allow_null=True)
-#     notes = serializers.CharField(required=False, allow_null=True, allow_blank=True, max_length=1000)
-#
-#     def validate_institutes(self, value):
-#         """
-#         Check that there are one or two Institutes given
-#         :param value:
-#         :return:
-#         """
-#
-#         if not 1 <= len(value) <= 2:
-#             raise serializers.ValidationError("Es wurden mehr als 2 oder keine Institute angegeben.")
-#         return value
-#
-#
-# class AcceptDeclineSerializer(serializers.Serializer):
-#     user_firstname = serializers.CharField()
-#     user_lastname = serializers.CharField()
-#     user_login = serializers.CharField()
-#     user_mail = serializers.EmailField()
-#     user_matrikel = serializers.CharField()
-#     accept = serializers.BooleanField()
-#
-#
-#
-#
-# class WaitlistSerializer(serializers.Serializer):
-#     user_firstname = serializers.CharField()
-#     user_lastname = serializers.CharField()
-#     user_login = serializers.CharField()
-#     user_mail = serializers.EmailField()
-#     user_matrikel = serializers.CharField()
-#     graduation = serializers.CharField()
-#     notes = serializers.CharField(required=False, allow_null=True, allow_blank=True, max_length=1000)
