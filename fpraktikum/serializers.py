@@ -32,7 +32,7 @@ class FpRegistrationSerializer(serializers.ModelSerializer):
         registration = FpRegistration.objects.create(**validated_data)
 
         for inst in institutes:
-            i = FpInstitute.objects.create(**inst, registration=registration)
+            FpInstitute.objects.create(registration=registration, **inst)
 
         return registration
 
