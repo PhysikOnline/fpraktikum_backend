@@ -201,4 +201,3 @@ class FpWaitlistSerializer(serializers.ModelSerializer):
 
 class DummySerializer(serializers.Serializer):
     pass
-
