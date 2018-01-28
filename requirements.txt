@@ -38,7 +38,8 @@ ipdb==0.10.3
 django-extensions==1.8.1
 
 # Data export
-django-import-export==0.5.1
+git+git://github.com/PhysikOnline-FFM/django-import-export.git@exp_view#egg=django-import-export
+# django-import-export==0.5.1
 tablib==0.12.1
 
 # Django REST framework
