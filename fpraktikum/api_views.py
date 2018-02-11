@@ -3,16 +3,16 @@
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse
 from rest_framework import generics, status, views
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from import_export.views import ExportViewMixin
-from fpraktikum.admin import RegistrantResource
+
+from fpraktikum.admin import RegistrantResource, WaitlistResource
+
 
 from fpraktikum.utils import get_semester, send_email
 from .serializers import *
-import csv
+from fpraktikum.db_utils import ExportView
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -264,21 +264,18 @@ class WaitlistView(ModelViewSet):
         return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
 
 
-class ExportRegistrantsView(generics.GenericAPIView, ExportViewMixin):
+class ExportRegistrantsView(ExportView):
 
     queryset = FpUserRegistrant.objects.all()
     serializer_class = DummySerializer
     permission_classes = ()
     resource_class = RegistrantResource
+    file_name = "Registrants"
 
-    def get(self, request, *args, **kwargs):
-        resource = self.resource_class()
-        data = resource.export()
-        headers = resource.get_export_headers()
-        response = HttpResponse(content_type="text/csv")
-        response['Content-Disposition'] = 'attachment; filename=file.csv'
-        writer = csv.writer(response, dialect=csv.excel)
-        writer.writerow(headers)
-        for registrant in data:
-            writer.writerow(registrant)
-        return response
+
+class ExportWaitlistView(ExportView):
+    queryset = FpWaitlist.objects.all()
+    serializer_class = DummySerializer
+    permission_classes = ()
+    resource_class = WaitlistResource
+    file_name = "Waitlist"
