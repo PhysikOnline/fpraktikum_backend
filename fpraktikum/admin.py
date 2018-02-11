@@ -86,6 +86,14 @@ class FpUserRegistrantAdmin(ImportExportModelAdmin):
 admin.site.register(FpUserRegistrant, FpUserRegistrantAdmin)
 
 
+class WaitlistResource(resources.ModelResource):
+
+    class Meta:
+        model = FpWaitlist
+        fields = tuple(map(lambda x: x.name, model._meta.get_fields()))
+
+
+
 class FpWaitlistAdmin(admin.ModelAdmin):
     list_display = [f.name for f in FpWaitlist._meta.get_fields()]
 
