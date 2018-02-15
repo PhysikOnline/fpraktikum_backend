@@ -200,5 +200,6 @@ class FpWaitlistSerializer(serializers.ModelSerializer):
         model = FpWaitlist
         fields = "__all__"
 
+
 class DummySerializer(serializers.Serializer):
     pass

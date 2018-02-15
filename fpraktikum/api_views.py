@@ -6,13 +6,11 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, status, views
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-
 from fpraktikum.admin import RegistrantResource, WaitlistResource
-
-
-from fpraktikum.utils import get_semester, send_email
+from rest_framework.permissions import IsAuthenticated
+from fpraktikum.utils import get_semester
 from .serializers import *
-from fpraktikum.db_utils import ExportView
+from fpraktikum.views import ExportView
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -95,7 +93,8 @@ class UserRegistrantViewset(ModelViewSet):
     name = 'set_registration'
     queryset = FpUserRegistrant.objects.all()
     serializer_class = FpFullUserRegistrantSerializer
-    permission_classes = ()
+    authentication_classes = (TestBackend,)
+    permission_classes = (IsAuthenticated,)
 
     def perform_create(self, serializer):
         user = serializer.save()
@@ -279,3 +278,5 @@ class ExportWaitlistView(ExportView):
     permission_classes = ()
     resource_class = WaitlistResource
     file_name = "Waitlist"
+
+

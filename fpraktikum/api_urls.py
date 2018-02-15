@@ -17,6 +17,6 @@ urlpatterns = [
     url(r'^check_partner/', CheckPartnerView.as_view(), name=CheckPartnerView.name),
     url(r'^export_reg', ExportRegistrantsView.as_view()),
     url(r'^export_wait', ExportWaitlistView.as_view()),
- ]
+]
 
 urlpatterns += router.urls
