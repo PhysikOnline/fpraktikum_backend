@@ -57,3 +57,6 @@ django-cors-headers == 2.0.0
 
 # Advanced testing
 pytest-django ==3.1.2
+
+# JWT stuff
+PyJWT == 1.5.3
