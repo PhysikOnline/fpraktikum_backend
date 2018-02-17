@@ -10,17 +10,10 @@ ENV PYTHONBUFFERED=1 DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE} DJANGO_ADM
 RUN addgroup -S app \
     && adduser -G app -h /app -D app
 
-# Copy Pipfile and install system-wide
-# We're installing system-wide, because we currently have problems
-# correctly using the entrypoint.sh, while activating the virtual environment
-COPY Pipfile Pipfile.lock /app/
-WORKDIR /app
-
 # Install build dependencies for PostgreSQL. While we're at it, also install
 # pipenv and all python requirements. Then remove unneeded build dependencies.
 RUN apk update \
     && apk add bash \
-
     && apk add --no-cache --virtual .build-deps \
        gcc \
        musl-dev \
