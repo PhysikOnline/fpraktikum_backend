@@ -3,9 +3,9 @@ version: '3'
 services:
   db:
     environment:
-      POSTGRES_DB: db_app
-      POSTGRES_USER: db_user
-      POSTGRES_PASSWORD: db_pass
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
     restart: always
     image: postgres:9.6-alpine
     ports:
@@ -14,8 +14,8 @@ services:
   web:
     build:
       context: .
-      dockerfile: ./docker/local/Dockerfile-dev
-    command: python3 manage.py runserver 0.0.0.0:8000
+      dockerfile: ./docker/local/Dockerfile.web
+    command: /start.sh && python manage.py collectstatic --noinput
     environment:
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
@@ -32,6 +32,8 @@ services:
     volumes:
       - .:/app
     links:
+      - db
+    depends_on:
       - db
     ports:
       - "8000:8000"
