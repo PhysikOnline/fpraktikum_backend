@@ -1,35 +1,41 @@
 from rest_framework.authentication import BaseAuthentication
 from django.contrib.auth.models import User
-import pip
-
-JWT_SECRET = "secret"
-JWT_ALGORITHM = "HS256"
+import jwt
+import os
 
 
-try:
-    import jwt
-
-except ImportError:
-    pip.main(["install", "PyJWT"])
-    import jwt
-
-
-class TestBackend(BaseAuthentication):
+class TokenBackend(BaseAuthentication):
     """
-    Test Authentication Backend used for designing a custom JWT-Authenticationbackend.
+    Authentication Backend used for authenticat the Requests.
+    We utilize the HTTP-Headers to deliver a JWT token.
+    Further we are only interessted if the token valid which
+    tells us that the request really comes from the registration;
+    not from a exploit skript.
     """
+
+    jwt_secret = None
+    jwt_alogrithm = None
+
+    def get_secret_key(self):
+        return self.jwt_secret
+
+    def get_algoithm(self):
+        return self.jwt_alogrithm
 
     def authenticate(self, request):
 
+        secret = self.get_secret_key()
+        algorithm = self.get_algoithm()
+
         try:
-            token = request.data["token"]
+            token = request.META.get("HTTP_TOKEN")
 
         except KeyError:
             token = "test"
 
         payload = ""
         try:
-            payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+            payload = jwt.decode(token, secret, algorithms=[algorithm])
 
         except jwt.DecodeError:
             return None
@@ -38,5 +44,18 @@ class TestBackend(BaseAuthentication):
 
         return user
 
-    def get_user(self, user_id=1):
-        return 1
+class UserBackend(TokenBackend):
+    """
+    The User Validation Backend which uses the secret Key for a User.
+    """
+
+    jwt_secret = os.environ.get("JWT_USER_SECRET")
+    jwt_alogrithm = os.environ.get("JWT_ALGORITHM")
+
+class AdminBackend(TokenBackend):
+    """
+    The Admin Validation Backend which uses the secret Key for a User.
+    """
+
+    jwt_secret = os.environ.get("JWT_ADMIN_SECRET")
+    jwt_alogrithm = os.environ.get("JWT_ALGORITHM")
