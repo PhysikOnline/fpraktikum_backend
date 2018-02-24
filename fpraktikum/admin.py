@@ -93,8 +93,9 @@ class WaitlistResource(resources.ModelResource):
         fields = tuple(map(lambda x: x.name, model._meta.get_fields()))
 
 
-class FpWaitlistAdmin(admin.ModelAdmin):
+class FpWaitlistAdmin(ImportExportModelAdmin):
     list_display = [f.name for f in FpWaitlist._meta.get_fields()]
+    resource_class = WaitlistResource
 
 
 admin.site.register(FpWaitlist, FpWaitlistAdmin)
