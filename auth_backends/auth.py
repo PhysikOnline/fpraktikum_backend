@@ -19,16 +19,33 @@ class TokenBackend(BaseAuthentication):
     def get_secret_key(self):
         return self.jwt_secret
 
-    def get_algoithm(self):
+    def get_algorithm(self):
         return self.jwt_alogrithm
 
     def get_dummy_user(self):
         return User.objects.get_or_create(username="root")
 
-    def authenticate(self, request):
+    def validate_content(self, request, payload):
+        """
+        We need a generic way to valid the content of the token against
+        the provided request data.
+        :param request: the request Object
+        :param payload: the decoded payload
+        :return: boolean
+        """
+        return True #default
 
+    def authenticate(self, request):
+        """
+        We define a JWT Authentication only based on the token
+        and to related to a database.
+        In addition we have the option to compar the encoded data
+        with provided data of the request.
+        :param request: request
+        :return: user object or None
+        """
         secret = self.get_secret_key()
-        algorithm = self.get_algoithm()
+        algorithm = self.get_algorithm()
 
         try:
             token = request.META.get("HTTP_TOKEN")
@@ -42,6 +59,9 @@ class TokenBackend(BaseAuthentication):
 
         except jwt.DecodeError:
             return None
+        # option to compare decoded payload with provided data within the request object
+        if not self.validate_content(request, payload):
+            return None
 
         user = self.get_dummy_user()
 
@@ -54,6 +74,23 @@ class UserBackend(TokenBackend):
 
     jwt_secret = os.environ.get("JWT_USER_SECRET")
     jwt_alogrithm = os.environ.get("JWT_ALGORITHM")
+
+    def validate_content(self, request, payload):
+        """
+        We need a generic way to valid the content of the token against
+        the provided request data.
+        Here we want that the user's lastname and matrikel encoded
+        in the token are the same as provided in the request.
+        :param request: the request Object
+        :param payload: the decoded payload
+        :return: boolean
+        """
+        if request.method == "POST":
+            if not (request.data["user_lastname"] == payload["user_lastname"]
+                    and request.data["user_matrikel"] == payload["user_matrikel"]):
+                return False
+        return True
+
 
 class AdminBackend(TokenBackend):
     """
