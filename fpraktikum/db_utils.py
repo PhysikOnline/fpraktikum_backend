@@ -2,7 +2,10 @@
 
 from fpraktikum.ilias_model import UsrData
 from fpraktikum.models import FpUserRegistrant, FpUserPartner, FpWaitlist
-
+import datetime
+import csv
+from django.http import HttpResponse
+from rest_framework import generics
 
 def il_db_retrieve(user_lastname, user_login):
     """

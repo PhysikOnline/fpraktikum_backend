@@ -14,7 +14,7 @@ schema_view = get_schema_view(
     ),
    # validators=['ssv', 'flex'],
     public=True,
-    permission_classes=(permissions.AllowAny,),
+    permission_classes=(permissions.IsAdminUser,),
     url="https://po-fp-staging.physikelearning.de/api/", # hard coded for now
 )
 

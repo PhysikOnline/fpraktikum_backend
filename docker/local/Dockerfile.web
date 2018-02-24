@@ -17,6 +17,7 @@ RUN apk update \
        tzdata \
        mariadb-dev \
        mariadb-client-libs \
+       git \
     && apk add --no-cache postgresql postgresql-dev
 
 # Set the correct timezone

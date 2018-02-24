@@ -6,10 +6,11 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, status, views
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-
-
-from fpraktikum.utils import get_semester, send_email
+from fpraktikum.admin import RegistrantResource, WaitlistResource
+from rest_framework.permissions import IsAuthenticated
+from fpraktikum.utils import get_semester
 from .serializers import *
+from fpraktikum.views import ExportView
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -259,3 +260,22 @@ class WaitlistView(ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
+
+
+class ExportRegistrantsView(ExportView):
+
+    queryset = FpUserRegistrant.objects.all()
+    serializer_class = DummySerializer
+    permission_classes = (IsAuthenticated,)     # The View is yet not used and therefore could be abused
+    resource_class = RegistrantResource
+    file_name = "Registrants"
+
+
+class ExportWaitlistView(ExportView):
+    queryset = FpWaitlist.objects.all()
+    serializer_class = DummySerializer
+    permission_classes = (IsAuthenticated,)     # The View is yet not used and therefore could be abused
+    resource_class = WaitlistResource
+    file_name = "Waitlist"
+
+
