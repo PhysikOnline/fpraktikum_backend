@@ -1,1 +1,0 @@
-web: gunicorn po_fp.wsgi
