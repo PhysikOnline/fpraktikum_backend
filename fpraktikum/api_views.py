@@ -9,20 +9,19 @@ from rest_framework.viewsets import ModelViewSet
 
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from auth_backends.auth import UserBackend, AdminBackend
-from auth_backends.permissions import OnlyAdminGet
+from auth_backends.permissions import OnlyAdminGet, OnlyAdminPostDelete
 
 
 from fpraktikum.utils import get_semester, send_email
 from .serializers import *
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class RegistrationView(ModelViewSet):
     name = 'registration'
     queryset = FpRegistration.objects.all()
     serializer_class = FpRegistrationSerializer
     authentication_classes = (UserBackend, AdminBackend)
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (OnlyAdminPostDelete,)
 
     def get_object(self):
         current_semester = get_semester()
