@@ -22,6 +22,9 @@ class TokenBackend(BaseAuthentication):
     def get_algoithm(self):
         return self.jwt_alogrithm
 
+    def get_dummy_user(self):
+        return User.objects.get_or_create(username="root")
+
     def authenticate(self, request):
 
         secret = self.get_secret_key()
@@ -40,7 +43,7 @@ class TokenBackend(BaseAuthentication):
         except jwt.DecodeError:
             return None
 
-        user = User.objects.get_or_create(username="root")
+        user = self.get_dummy_user()
 
         return user
 
@@ -59,3 +62,6 @@ class AdminBackend(TokenBackend):
 
     jwt_secret = os.environ.get("JWT_ADMIN_SECRET")
     jwt_alogrithm = os.environ.get("JWT_ALGORITHM")
+
+    def get_dummy_user(self):
+        return User.objects.get_or_create(username="dummy_admin", is_staff=True)
