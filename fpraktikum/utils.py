@@ -7,24 +7,11 @@ from django.template.loader import get_template
 from django.contrib.auth.models import User
 
 import fpraktikum.models
-import pip
-
-pip.main(['uninstall', '--yes' ,'jwt'])
-
-try:
-    import jwt
-
-except ImportError:
-    pip.main(['install', 'PyJWT'])
-    import jwt
 
 
-"""
-This File is for Custom helper functions
-"""
 
-JWT_SECRET = "secret"
-JWT_ALGORITHM = "HS256"
+
+# This File is for Custom helper functions
 
 def get_semester():
     """

@@ -93,8 +93,7 @@ class UserRegistrantViewset(ModelViewSet):
     name = 'set_registration'
     queryset = FpUserRegistrant.objects.all()
     serializer_class = FpFullUserRegistrantSerializer
-    authentication_classes = (TestBackend,)
-    permission_classes = (IsAuthenticated,)
+    permission_classes = ()
 
     def perform_create(self, serializer):
         user = serializer.save()
@@ -267,7 +266,7 @@ class ExportRegistrantsView(ExportView):
 
     queryset = FpUserRegistrant.objects.all()
     serializer_class = DummySerializer
-    permission_classes = ()
+    permission_classes = (IsAuthenticated,)     # The View is yet not used and therefore could be abused
     resource_class = RegistrantResource
     file_name = "Registrants"
 
@@ -275,7 +274,7 @@ class ExportRegistrantsView(ExportView):
 class ExportWaitlistView(ExportView):
     queryset = FpWaitlist.objects.all()
     serializer_class = DummySerializer
-    permission_classes = ()
+    permission_classes = (IsAuthenticated,)     # The View is yet not used and therefore could be abused
     resource_class = WaitlistResource
     file_name = "Waitlist"
 
