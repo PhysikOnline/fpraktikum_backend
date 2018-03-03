@@ -11,7 +11,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from auth_backends.auth import UserBackend, AdminBackend
 from auth_backends.permissions import OnlyAdminGet, OnlyAdminPostDelete
-
+from fpraktikum.admin import RegistrantResource, WaitlistResource
 
 from fpraktikum.utils import get_semester, send_email
 
@@ -180,7 +180,7 @@ class UserPartnerViewset(ModelViewSet):
         instance.registrant.partner_has_accepted = True
         instance.registrant.save()
 
-        send_email(instance.registrant.get(), "accept_acc")
+        send_email(instance.registrant, "accept_acc")
         return Response(data=serializer(instance).data)
 
     def destroy(self, request, *args, **kwargs):
