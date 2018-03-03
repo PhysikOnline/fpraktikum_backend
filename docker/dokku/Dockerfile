@@ -25,6 +25,7 @@ RUN apk update \
        libjpeg \
        gettext \
        tzdata \
+       git \
        mariadb-dev \
        mariadb-client-libs \
     && apk add --no-cache postgresql postgresql-dev
