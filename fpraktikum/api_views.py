@@ -26,6 +26,14 @@ class RegistrationView(ModelViewSet):
     authentication_classes = (UserBackend, AdminBackend)
     permission_classes = (OnlyAdminPostDelete,)
 
+
+class CurrentRegistrationView(generics.RetrieveAPIView):
+    name = 'current-registration'
+    queryset = FpRegistration.objects.all()
+    serializer_class = FpRegistrationSerializer
+    authentication_classes = (UserBackend, AdminBackend)
+    permission_classes = (OnlyAdminPostDelete,)
+
     def get_object(self):
         current_semester = get_semester()
         obj = self.get_queryset().filter(semester=current_semester)
