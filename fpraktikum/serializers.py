@@ -11,7 +11,7 @@ class FpInstituteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FpInstitute
-        fields = ('id', 'name', 'places', 'graduation', 'semesterhalf')
+        fields = ('id', 'name', 'places', 'graduation', 'semesterhalf', 'notes')
 
         extra_kwargs = {'id': {'read_only': False,
                                'required': False
