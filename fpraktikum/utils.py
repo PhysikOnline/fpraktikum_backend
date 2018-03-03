@@ -1,14 +1,17 @@
 from datetime import datetime
 
+from rest_framework.authentication import BaseAuthentication
+from rest_framework.exceptions import AuthenticationFailed
 from django.core.mail import EmailMessage
 from django.template.loader import get_template
+from django.contrib.auth.models import User
 
 import fpraktikum.models
 
-"""
-This File is for Custom helper functions
-"""
 
+
+
+# This File is for Custom helper functions
 
 def get_semester():
     """

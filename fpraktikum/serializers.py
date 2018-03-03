@@ -195,10 +195,11 @@ class FpFullUserPartnerSerializer(serializers.ModelSerializer):
 
 
 class FpWaitlistSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = FpWaitlist
+        fields = "__all__"
 
 
 class DummySerializer(serializers.Serializer):
     pass
-

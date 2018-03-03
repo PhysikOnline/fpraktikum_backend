@@ -144,10 +144,9 @@
             "version": "==1.0.4"
         },
         "django-import-export": {
-            "hashes": [
-                "sha256:5a932117a082971250703dec1ffcb6a92f913c393ef87b53331ee812b2b2fd4e"
-            ],
-            "version": "==0.5.1"
+            "editable": true,
+            "git": "git://github.com/PhysikOnline-FFM/django-import-export.git",
+            "ref": "a174368f8430ecafc7db1344bca4389748cc534e"
         },
         "django-model-utils": {
             "hashes": [
