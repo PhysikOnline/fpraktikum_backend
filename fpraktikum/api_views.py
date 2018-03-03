@@ -6,19 +6,25 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, status, views
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from fpraktikum.admin import RegistrantResource, WaitlistResource
-from rest_framework.permissions import IsAuthenticated
-from fpraktikum.utils import get_semester
+
+
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from auth_backends.auth import UserBackend, AdminBackend
+from auth_backends.permissions import OnlyAdminGet, OnlyAdminPostDelete
+
+
+from fpraktikum.utils import get_semester, send_email
+
 from .serializers import *
 from fpraktikum.views import ExportView
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class RegistrationView(ModelViewSet):
     name = 'registration'
     queryset = FpRegistration.objects.all()
     serializer_class = FpRegistrationSerializer
-    permission_classes = ()
+    authentication_classes = (UserBackend, AdminBackend)
+    permission_classes = (OnlyAdminPostDelete,)
 
     def get_object(self):
         current_semester = get_semester()
@@ -32,7 +38,8 @@ class UserCheckView(generics.RetrieveAPIView):
     lookup_field = 'user_login'
     serializer_class = DummySerializer
     queryset = FpUserRegistrant.objects.all()
-    permission_classes = ()
+    authentication_classes = (UserBackend, AdminBackend)
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
         """
@@ -93,7 +100,8 @@ class UserRegistrantViewset(ModelViewSet):
     name = 'set_registration'
     queryset = FpUserRegistrant.objects.all()
     serializer_class = FpFullUserRegistrantSerializer
-    permission_classes = ()
+    authentication_classes = (UserBackend, AdminBackend)
+    permission_classes = (OnlyAdminGet,)
 
     def perform_create(self, serializer):
         user = serializer.save()
@@ -151,7 +159,8 @@ class UserPartnerViewset(ModelViewSet):
     name = 'accept'
     queryset = FpUserPartner.objects.all()
     serializer_class = FpFullUserPartnerSerializer
-    permission_classes = ()
+    authentication_classes = (UserBackend, AdminBackend)
+    permission_classes = (OnlyAdminGet,)
 
     def update(self, request, *args, **kwargs):
         """
@@ -216,6 +225,8 @@ class CheckPartnerView(generics.RetrieveAPIView):
 
     serializer_class = DummySerializer
     queryset = FpUserPartner.objects.all()
+    authentication_classes = (UserBackend, AdminBackend)
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
 
@@ -242,7 +253,8 @@ class WaitlistView(ModelViewSet):
     name = "waitlist"
     serializer_class = FpWaitlistSerializer
     queryset = FpWaitlist.objects.all()
-    permission_classes = ()
+    authentication_classes = (UserBackend, AdminBackend)
+    permission_classes = (OnlyAdminGet,)
 
     def perform_create(self, serializer):
         user = serializer.save()
