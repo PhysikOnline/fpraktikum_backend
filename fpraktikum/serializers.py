@@ -145,19 +145,29 @@ class FpFullUserRegistrantSerializer(serializers.ModelSerializer):
     def validate_institutes(self, institutes):
         """
         We Only allow 2 Institutes.
+        But there is one, and only one, case where 1 Institute is allowed.
+        This case is, if a student has graduation "L" (Lehramt)
         :param institutes:
         :return:
         """
         errors = []
-        if not (len(institutes) == 2):
-            errors.append(u"Es wurden mehr als 2 oder keine Institute angegeben {}.".format(institutes))
-            raise serializers.ValidationError(errors) # if we do not raise it here the next statements will fail. e.g. only 1 institute
-        if institutes[0]["semesterhalf"] == 3 or institutes[1]["semesterhalf"]==3:
-            errors.append(u"Eines der Institute wird für beide Semesterhälften belegt, bitte wähle nur dieses aus.")
-        if institutes[0]["name"] == institutes[1]["name"]:
-            errors.append(u"Es müssen 2 unterschiedliche Institute ausgewählt werden.")
-        if not institutes[0]["graduation"] == institutes[1]["graduation"]:
-            errors.append(u"Es müssen Institute mit dem gleichen Abschluss gewählt werden.")
+
+        if len(institutes) == 1 and institutes[0]["graduation"] == "L":
+            # if the student is a "Lehramt" candidate
+            # no checks needed
+            errors.append("was here")
+            pass
+        else:
+            errors.append(institutes)
+            if not (len(institutes) == 2):
+                errors.append(u"Es wurden mehr als 2 oder keine Institute angegeben {}.".format(institutes))
+                raise serializers.ValidationError(errors) # if we do not raise it here the next statements will fail. e.g. only 1 institute
+            if institutes[0]["semesterhalf"] == 3 or institutes[1]["semesterhalf"]==3:
+                errors.append(u"Eines der Institute wird für beide Semesterhälften belegt, bitte wähle nur dieses aus.")
+            if institutes[0]["name"] == institutes[1]["name"]:
+                errors.append(u"Es müssen 2 unterschiedliche Institute ausgewählt werden.")
+            if not institutes[0]["graduation"] == institutes[1]["graduation"]:
+                errors.append(u"Es müssen Institute mit dem gleichen Abschluss gewählt werden.")
 
         for inst in institutes:
             try:
