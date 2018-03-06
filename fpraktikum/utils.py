@@ -105,7 +105,7 @@ def send_email(data_serializer, status):
 
     try:
         partner = data_serializer.partner
-    except fpraktikum.models.FpUserPartner.DoesNotExist:
+    except (fpraktikum.models.FpUserPartner.DoesNotExist, AttributeError):
         partner = None
     else:
         partner_data = {
