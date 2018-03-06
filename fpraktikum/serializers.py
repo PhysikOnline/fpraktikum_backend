@@ -108,7 +108,6 @@ class FpFullUserRegistrantSerializer(serializers.ModelSerializer):
     def validate(self, data):
 
         errors = []
-
         places_needed = 2 if data["partner"] else 1
 
         #TODO: we encounter a cyclic import here wilth il_db_retrieve and check_user
@@ -150,15 +149,15 @@ class FpFullUserRegistrantSerializer(serializers.ModelSerializer):
         :param institutes:
         :return:
         """
+
         errors = []
 
         if len(institutes) == 1 and institutes[0]["graduation"] == "L":
             # if the student is a "Lehramt" candidate
             # no checks needed
-            errors.append("was here")
             pass
         else:
-            errors.append(institutes)
+
             if not (len(institutes) == 2):
                 errors.append(u"Es wurden mehr als 2 oder keine Institute angegeben {}.".format(institutes))
                 raise serializers.ValidationError(errors) # if we do not raise it here the next statements will fail. e.g. only 1 institute
