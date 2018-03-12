@@ -3,6 +3,8 @@
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from django.http.request import HttpRequest
+from django.urls import reverse
 from rest_framework import generics, status, views
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -228,7 +230,7 @@ class UserPartnerViewset(ModelViewSet):
         return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
 
 
-class CheckPartnerView(generics.RetrieveAPIView):
+class CheckPartnerView(UserCheckView):
     name = "check_partner"
 
     serializer_class = DummySerializer
@@ -247,13 +249,8 @@ class CheckPartnerView(generics.RetrieveAPIView):
 
         if not user_legal:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        if not is_user_valid(login=login):
-            # User is registered
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        # User is leagl and not registered
-        return Response(user_legal)
+        self.kwargs['user_login'] = login
+        return super().get(request, *args, **kwargs)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
