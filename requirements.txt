@@ -1,5 +1,5 @@
 # Bleeding edge Django
-Django>=1.8
+Django==1.11
 gunicorn>=19.7
 
 # Configuration
@@ -23,7 +23,6 @@ django-allauth==0.32.0
 
 # Python-PostgreSQL Database Adapter
 psycopg2==2.7.1
-mysqlclient==1.3.12
 
 # Unicode slugification
 awesome-slugify==1.6.5
@@ -38,18 +37,25 @@ ipdb==0.10.3
 django-extensions==1.8.1
 
 # Data export
-django-import-export==0.5.1
+git+git://github.com/PhysikOnline-FFM/django-import-export.git@exp_view#egg=django-import-export
+# django-import-export==0.5.1
 tablib==0.12.1
 
 # Django REST framework
-djangorestframework==3.6.3
+djangorestframework==3.7.7
 markdown==2.6.8
 django-filter==1.0.4
 
 # Documentation of REST-Framework
-coreapi==2.3.1
+coreapi==2.3.3
 pygments==2.2.0
-django-rest-swagger==2.1.2
+drf-yasg == 1.1.3
 
 # CORS Headers
 django-cors-headers == 2.0.0
+
+# Advanced testing
+pytest-django ==3.1.2
+
+# JWT stuff
+PyJWT == 1.5.3

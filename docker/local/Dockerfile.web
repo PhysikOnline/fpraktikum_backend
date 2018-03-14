@@ -1,0 +1,43 @@
+FROM python:alpine3.6
+ENV PYTHONBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 INSIDE_DOCKER=1
+
+# Install build dependencies for PostgreSQL. While we're at it, also install
+# pipenv and all python requirements. Then remove unneeded build dependencies.
+RUN apk update \
+    && apk add --no-cache --virtual .build-deps \
+       gcc \
+       musl-dev \
+       zlib-dev \
+       jpeg-dev \
+       jpeg \
+       libxslt-dev \
+       libxml2-dev \
+       libjpeg \
+       gettext \
+       tzdata \
+       mariadb-dev \
+       mariadb-client-libs \
+       git \
+    && apk add --no-cache postgresql postgresql-dev
+
+# Set the correct timezone
+# RUN cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime \
+#    && echo "Europe/Berlin" > /etc/timezone
+
+
+# Copy Pipfile, install pipenv and then install all python dependencies
+
+COPY Pipfile Pipfile.lock /
+RUN pip install pipenv
+RUN LIBRARY_PATH=/lib:/usr/lib /bin/sh -c "pipenv install --dev --system"
+
+
+# Copy the entrypoint.sh and start.sh and make them executable
+
+COPY docker/local/entrypoint.sh docker/local/start.sh /
+RUN chmod +x /entrypoint.sh /start.sh
+
+# All subsequent commands will be run from the /app folder
+WORKDIR /app
+
+ENTRYPOINT ["/entrypoint.sh"]

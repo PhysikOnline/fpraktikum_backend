@@ -50,5 +50,3 @@ geomat/media/
 #Batch-file for starting docker container
 docker_geomat_batch.bat
 
-#Dockerfile not needed for dokku so ignore it
-Dockerfile

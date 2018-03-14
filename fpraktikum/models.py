@@ -56,6 +56,11 @@ class FpInstitute(models.Model):
                                        choices=SEMESTER_HALF
                                        )
 
+    notes = models.TextField(max_length=1000,
+                             verbose_name=_("Notes"),
+                             blank=True,
+                             null=True)
+
     class Meta:
         verbose_name = _("institute")
         verbose_name_plural = _("institutes")
@@ -163,7 +168,11 @@ class FpUserPartner(models.Model):
 
 
 class FpWaitlist(models.Model):
-    GRADUATION_CHOICES = (("BA", "Bachelor"), ("MA", "Master"), ("L", "Lehramt"))
+    GRADUATION_CHOICES = (
+        ("BA", "Bachelor"),
+        ("MA", "Master"),
+        ("L", "Lehramt")
+    )
 
     user_firstname = models.CharField(max_length=100,
                                       verbose_name=_("user firstname"),
@@ -183,6 +192,16 @@ class FpWaitlist(models.Model):
                                   choices=GRADUATION_CHOICES,
                                   blank=True
                                   )
+    institute_firsthalf = models.CharField(
+        verbose_name=_("institute of first semesterhalf"),
+        max_length=100,
+        blank=True
+    )
+    institute_secondhalf = models.CharField(
+        verbose_name=_("institute of second semesterhalf"),
+        max_length=100,
+        blank=True
+    )
     notes = models.TextField(max_length=1000,
                              verbose_name=_("Notes"),
                              blank=True,

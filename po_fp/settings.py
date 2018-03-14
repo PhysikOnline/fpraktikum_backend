@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 import re
 
+from corsheaders.defaults import default_headers
+
 import environ
 
 ROOT_DIR = environ.Path(
@@ -51,7 +53,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'corsheaders',
-    'rest_framework_swagger',
+    'drf_yasg',
     'import_export',
 ]
 
@@ -231,7 +233,8 @@ REST_FRAMEWORK = {
         ['rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'],
     'DEFAULT_RENDERER_CLASSES':
         ('rest_framework.renderers.JSONRenderer',
-         'rest_framework.renderers.BrowsableAPIRenderer',),
+         'rest_framework.renderers.BrowsableAPIRenderer'
+         ),
     'TEST_REQUEST_DEFAULT_FORMAT':
         'json',
 }
@@ -242,6 +245,6 @@ REST_FRAMEWORK = {
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-
+CORS_ALLOW_HEADERS = default_headers + ('token',)
 
 # CORS_ORIGIN_WHITELIST = ()
