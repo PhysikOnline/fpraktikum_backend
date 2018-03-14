@@ -50,21 +50,21 @@ class UserCheckView(generics.RetrieveAPIView):
     queryset = FpUserRegistrant.objects.all()
     authentication_classes = (UserBackend, AdminBackend)
     permission_classes = (IsAuthenticated,)
+    models = {"registrant": (FpUserRegistrant, FpFullUserRegistrantSerializer),
+              "partner": (FpUserPartner, FpFullUserPartnerSerializer),
+              "waitlist": (FpWaitlist, FpWaitlistSerializer),
+              }
 
-    def get(self, request, *args, **kwargs):
-        """
-        Returns the object the view is displaying.
+    def get_models(self):
+        return self.models
 
-        You may want to override this if you need to provide non-standard
-        queryset lookups.  Eg if objects are referenced using multiple
-        keyword arguments in the url conf.
-        """
-        login = self.kwargs[self.lookup_field]
+    def get_login(self):
+        return self.kwargs[self.lookup_field]
 
-        models = {"registrant": (FpUserRegistrant, FpFullUserRegistrantSerializer),
-                  "partner": (FpUserPartner, FpFullUserPartnerSerializer),
-                  "waitlist": (FpWaitlist, FpWaitlistSerializer),
-                  }
+    def get_response_data(self, login):
+        login = login
+
+        models = self.get_models()
         data = {"status": None}
         for k, v in models.items():
             try:
@@ -77,25 +77,15 @@ class UserCheckView(generics.RetrieveAPIView):
 
                 data = v[1](user).data
                 data["status"] = k
-        return Response(data)
-
-
-class TestIlDbView(generics.RetrieveAPIView):
-    name = 'ilias_db'
-    queryset = FpRegistration.objects.all()
-    serializer_class = FpRegistrationSerializer
+        return data
 
     def get(self, request, *args, **kwargs):
-
-        get_params = request.GET
-        result = il_db_retrieve(user_firstname=get_params['user_firstname'], user_lastname=get_params['user_lastname'],
-                                user_login=get_params['user_login'], user_mail=get_params['user_mail'])
-        if result:
-            return Response(data={'data': result}, status=status.HTTP_200_OK)
-
-        else:
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+        """
+        Returns the object the view is displaying.
+        """
+        login = self.get_login()
+        data = self.get_response_data(login)
+        return Response(data)
 
 @method_decorator(csrf_exempt, name='dispatch')
 class UserRegistrantViewset(ModelViewSet):
@@ -249,8 +239,13 @@ class CheckPartnerView(UserCheckView):
 
         if not user_legal:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        self.kwargs['user_login'] = login
-        return super().get(request, *args, **kwargs)
+        # we retrive the usual "CheckUser data"
+        data = self.get_response_data(login)
+
+        if not data["status"]:  # if status is None the User isn' registered so we provide the Data
+            return Response(user_legal)
+
+        return Response(data)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
