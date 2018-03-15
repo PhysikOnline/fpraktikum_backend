@@ -36,7 +36,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", 'secret')
 # '55$vbbbgy8kyw=^=w45%s))24*#0_^y8p4ngp*mxf&snnr1v&7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True if os.environ.get("NODEBUG") is None else False
+DEBUG = bool(os.environ.get("DEBUG", default=False))
 
 ALLOWED_HOSTS = environ.Env().list('DJANGO_ALLOWED_HOSTS')
 
@@ -248,5 +248,7 @@ REST_FRAMEWORK = {
 CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOW_HEADERS = default_headers + ('token',)
+
+ADMINS =[("Christian Grossmüller", "christian@elearning.physik.uni-frankfurt.de")]
 
 # CORS_ORIGIN_WHITELIST = ()
