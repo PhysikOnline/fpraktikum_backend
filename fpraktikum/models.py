@@ -21,7 +21,7 @@ class FpRegistration(models.Model):
         verbose_name = _("FP registration")
         verbose_name_plural = _("Fp registrations")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.semester
 
 
@@ -65,8 +65,8 @@ class FpInstitute(models.Model):
         verbose_name = _("institute")
         verbose_name_plural = _("institutes")
 
-    def __unicode__(self):
-        return self.name
+    def __str__(self):
+        return "{0}, {1}, {2}".format(self.name, self.graduation, self.semesterhalf)
 
 
 class FpUserRegistrant(models.Model):
@@ -118,7 +118,7 @@ class FpUserRegistrant(models.Model):
         verbose_name_plural = _("Users/Registrants")
         unique_together = (('user_firstname', 'user_lastname', 'user_mail', 'user_login', 'user_matrikel'),)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.user_lastname
 
 
@@ -163,7 +163,7 @@ class FpUserPartner(models.Model):
         verbose_name_plural = _("Users/Partners")
         unique_together = (('user_firstname', 'user_lastname', 'user_mail', 'user_login', 'user_matrikel'),)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.user_lastname
 
 
@@ -211,3 +211,5 @@ class FpWaitlist(models.Model):
         verbose_name = _("Waitlist")
         verbose_name_plural = _("Waitlists")
         unique_together = (('user_firstname', 'user_lastname', 'user_mail', 'user_login', 'user_matrikel'),)
+    def __str__(self):
+        return self.user_lastname
