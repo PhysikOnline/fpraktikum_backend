@@ -46,6 +46,7 @@ admin.site.register(FpRegistration, FpRegistrationAdmin)
 class RegistrantResource(resources.ModelResource):
     institute_first_half = fields.Field()
     institute_second_half= fields.Field()
+    institute_both_halfs = fields.Field()
     institute_graduation = fields.Field()
 
     class Meta:
@@ -55,19 +56,27 @@ class RegistrantResource(resources.ModelResource):
                   "notes",
                   )
         export_order = ("user_firstname", "user_lastname", "user_matrikel", "partner_has_accepted",
-                        "institute_first_half", "institute_second_half", "institute_graduation", "partner__user_firstname",
+                        "institute_first_half", "institute_second_half", "institute_both_halfs", "institute_graduation", "partner__user_firstname",
                         "partner__user_lastname", "partner__user_matrikel", "notes")
 
     def return_institute_semesterhalf(self, registrant, half):
-        return registrant.institutes.filter(semesterhalf=half).get()
+        try:
+            return registrant.institutes.filter(semesterhalf=half).get().name
+
+        except:
+            return None
 
     def dehydrate_institute_first_half(self, registrant):
-        institute = self. return_institute_semesterhalf(registrant,1)
-        return "{}".format(institute.name)
+        institute_name = self. return_institute_semesterhalf(registrant,1)
+        return "{}".format(institute_name)
 
     def dehydrate_institute_second_half(self,registrant):
-        institute = self.return_institute_semesterhalf(registrant, 2)
-        return "{}".format(institute.name)
+        institute_name = self.return_institute_semesterhalf(registrant, 2)
+        return "{}".format(institute_name)
+
+    def dehydrate_institute_both_halfs(self, registrant):
+        institute_name = self.return_institute_semesterhalf(registrant, 3)
+        return "{}".format(institute_name)
 
     def dehydrate_institute_graduation(self, registrant):
         institutes = registrant.institutes.all()
