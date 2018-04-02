@@ -44,7 +44,8 @@ admin.site.register(FpRegistration, FpRegistrationAdmin)
 
 
 class RegistrantResource(resources.ModelResource):
-    institute_semesterhalf = fields.Field()
+    institute_first_half = fields.Field()
+    institute_second_half= fields.Field()
     institute_graduation = fields.Field()
 
     class Meta:
@@ -54,15 +55,19 @@ class RegistrantResource(resources.ModelResource):
                   "notes",
                   )
         export_order = ("user_firstname", "user_lastname", "user_matrikel", "partner_has_accepted",
-                        "institute_semesterhalf", "institute_graduation", "partner__user_firstname",
+                        "institute_first_half", "institute_second_half", "institute_graduation", "partner__user_firstname",
                         "partner__user_lastname", "partner__user_matrikel", "notes")
 
-    def dehydrate_institute_semesterhalf(self, registrant):
-        institutes = registrant.institutes.all()
-        string = ""
-        for inst in institutes:
-            string += "name: {} semesterhalf: {},".format(inst.name, inst.semesterhalf)
-        return string
+    def return_institute_semesterhalf(self, registrant, half):
+        return registrant.institutes.filter(semesterhalf=half).get()
+
+    def dehydrate_institute_first_half(self, registrant):
+        institute = self. return_institute_semesterhalf(registrant,1)
+        return "{}".format(institute.name)
+
+    def dehydrate_institute_second_half(self,registrant):
+        institute = self.return_institute_semesterhalf(registrant, 2)
+        return "{}".format(institute.name)
 
     def dehydrate_institute_graduation(self, registrant):
         institutes = registrant.institutes.all()
