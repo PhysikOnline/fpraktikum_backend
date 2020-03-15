@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_yasg',
     'import_export',
+    'raven.contrib.django.raven_compat',
     'gunicorn'
 ]
 
@@ -261,9 +262,6 @@ ADMINS =[("Christian Grossmüller", "christian@elearning.physik.uni-frankfurt.de
 # CORS_ORIGIN_WHITELIST = ()
 
 if not DEBUG:
-    # Sentry Raven client
-    INSTALLED_APPS += ["raven.contrib.django.raven_compat",]
-
     # Sentry Configuration
     SENTRY_DSN = env("DJANGO_SENTRY_DSN")
     SENTRY_CLIENT = env(
