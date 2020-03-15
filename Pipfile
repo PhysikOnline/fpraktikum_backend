@@ -1,13 +1,10 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [packages]
-
-Django = "==1.11"
+Django = ">=2.0"
 gunicorn = "==19.7"
 django-environ = "==0.4.3"
 whitenoise = "==3.3.0"
@@ -21,8 +18,8 @@ pytz = "==2017.2"
 ipython = "==5.4.1"
 ipdb = "==0.10.3"
 django-extensions = "==1.8.1"
-django-import-export = {git = "git://github.com/PhysikOnline-FFM/django-import-export.git", ref = "exp_view", editable = true}
-tablib = "==0.12.1"
+django-import-export = "*"
+tablib = "*"
 djangorestframework = "==3.7.7"
 Markdown = "==2.6.8"
 django-filter = "==1.0.4"
@@ -35,7 +32,6 @@ awesome-slugify = "*"
 mysqlclient = "*"
 Werkzeug = "*"
 PyJWT = "*"
-
+raven = "*"
 
 [dev-packages]
-
