@@ -47,7 +47,6 @@ class UsrData(models.Model):
     auth_mode = models.CharField(max_length=10, blank=True, null=True)
     profile_incomplete = models.IntegerField(blank=True, null=True)
     ext_account = models.CharField(max_length=250, blank=True, null=True)
-    im_icq = models.CharField(max_length=40, blank=True, null=True)
     im_yahoo = models.CharField(max_length=40, blank=True, null=True)
     im_msn = models.CharField(max_length=40, blank=True, null=True)
     im_aim = models.CharField(max_length=40, blank=True, null=True)
