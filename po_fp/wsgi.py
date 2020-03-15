@@ -17,5 +17,5 @@ if not bool(os.environ.get("DEBUG", default=False)):
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "po_fp.settings")
 
 application = get_wsgi_application()
-if bool(os.environ.get("DEBUG", default=False)):
+if not bool(os.environ.get("DEBUG", default=False)):
     application = Sentry(application)
