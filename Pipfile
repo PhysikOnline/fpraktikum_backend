@@ -1,41 +1,37 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [packages]
-
-Django = "==1.11"
+Django = ">=2.0"
 gunicorn = "==19.7"
 django-environ = "==0.4.3"
-whitenoise = "==3.3.0"
+whitenoise = "*"
 django-braces = "==1.11.0"
 django-crispy-forms = "==1.6.1"
 django-model-utils = "==3.0.0"
 Pillow = "*"
 django-allauth = "==0.32.0"
-"psycopg2" = "==2.7.1"
+"psycopg2" = "==2.7.7"
 pytz = "==2017.2"
 ipython = "==5.4.1"
 ipdb = "==0.10.3"
-django-extensions = "==1.8.1"
-django-import-export = {git = "git://github.com/PhysikOnline-FFM/django-import-export.git", ref = "exp_view", editable = true}
-tablib = "==0.12.1"
-djangorestframework = "==3.7.7"
+django-extensions = "*"
+django-import-export = "*"
+tablib = "*"
+djangorestframework = "*"
 Markdown = "==2.6.8"
 django-filter = "==1.0.4"
-coreapi = "==2.3.3"
+coreapi = "*"
 Pygments = "==2.2.0"
-drf-yasg = "==1.1.3"
-django-cors-headers = "==2.0.0"
-pytest-django = "==3.1.2"
+drf-yasg = "*"
+django-cors-headers = "*"
+pytest-django = "*"
 awesome-slugify = "*"
 mysqlclient = "*"
 Werkzeug = "*"
 PyJWT = "*"
-
+raven = "*"
 
 [dev-packages]
-

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import re
+import logging
 
 from corsheaders.defaults import default_headers
 
@@ -21,6 +22,10 @@ ROOT_DIR = environ.Path(
     __file__) - 2  # ==>( po-fp-django/po_fp/settings.py - 2 = po-fp-django/)
 # po-fp-django/po_fp/settings.py - 2 = po-fp-django/
 APPS_DIR = ROOT_DIR.path('fpraktikum')
+
+
+env = environ.Env()
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 # BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -58,6 +63,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_yasg',
     'import_export',
+    'raven.contrib.django.raven_compat',
+    'gunicorn'
 ]
 
 MIDDLEWARE = [
@@ -253,3 +260,55 @@ CORS_ALLOW_HEADERS = default_headers + ('token',)
 ADMINS =[("Christian Grossmüller", "christian@elearning.physik.uni-frankfurt.de")]
 
 # CORS_ORIGIN_WHITELIST = ()
+
+if not DEBUG:
+    # Sentry Configuration
+    SENTRY_DSN = env("DJANGO_SENTRY_DSN")
+    SENTRY_CLIENT = env(
+        "DJANGO_SENTRY_CLIENT", default="raven.contrib.django.raven_compat.DjangoClient"
+    )
+    LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": True,
+        "root": {"level": "WARNING", "handlers": ["sentry"], },
+        "formatters": {
+            "verbose": {
+                "format": "%(levelname)s %(asctime)s %(module)s "
+                          "%(process)d %(thread)d %(message)s"
+            },
+        },
+        "handlers": {
+            "sentry": {
+                "level": "ERROR",
+                "class": "raven.contrib.django.raven_compat.handlers.SentryHandler",
+            },
+            "console": {
+                "level": "DEBUG",
+                "class": "logging.StreamHandler",
+                "formatter": "verbose",
+            },
+        },
+        "loggers": {
+            "django.db.backends": {
+                "level": "ERROR",
+                "handlers": ["console"],
+                "propagate": False,
+            },
+            "raven": {"level": "DEBUG", "handlers": ["console"], "propagate": False, },
+            "sentry.errors": {
+                "level": "DEBUG",
+                "handlers": ["console"],
+                "propagate": False,
+            },
+            "django.security.DisallowedHost": {
+                "level": "ERROR",
+                "handlers": ["console", "sentry"],
+                "propagate": False,
+            },
+        },
+    }
+    SENTRY_CELERY_LOGLEVEL = env.int("DJANGO_SENTRY_LOG_LEVEL", logging.INFO)
+    RAVEN_CONFIG = {
+        "CELERY_LOGLEVEL": env.int("DJANGO_SENTRY_LOG_LEVEL", logging.INFO),
+        "DSN": SENTRY_DSN,
+    }
