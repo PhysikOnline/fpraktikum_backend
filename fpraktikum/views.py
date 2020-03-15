@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from rest_framework import generics
-from import_export.views import ExportViewMixin
 import csv
 import datetime
 from django.http import HttpResponse
@@ -9,7 +8,7 @@ from django.http import HttpResponse
 
 # Create your views here.
 
-class ExportView(generics.GenericAPIView, ExportViewMixin):
+class ExportView(generics.GenericAPIView):
     queryset = None
     serializer_class = None
     permission_classes = ()
