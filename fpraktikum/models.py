@@ -48,7 +48,8 @@ class FpInstitute(models.Model):
     registration = models.ForeignKey(FpRegistration,
                                      verbose_name=_("registration"),
                                      related_name="institutes",
-                                     blank=True
+                                     blank=True,
+                                     on_delete=models.CASCADE
                                      )
 
     semesterhalf = models.IntegerField(verbose_name=_("semester half"),
@@ -93,7 +94,7 @@ class FpUserRegistrant(models.Model):
                                      )
     institutes = models.ManyToManyField(FpInstitute,
                                         verbose_name=_("institutes"),
-                                        blank=True
+                                        blank=True,
                                         )
     notes = models.TextField(max_length=1000,
                              verbose_name=_("Notes"),
@@ -146,12 +147,13 @@ class FpUserPartner(models.Model):
                                      )
     institutes = models.ManyToManyField(FpInstitute,
                                         verbose_name=_("institutes"),
-                                        blank=True
+                                        blank=True,
                                         )
     registrant = models.OneToOneField(FpUserRegistrant,
                                       verbose_name=_("registrant"),
                                       related_name="partner",
                                       blank=True,
+                                      on_delete=models.DO_NOTHING
                                       )
     notes = models.TextField(max_length=1000,
                              verbose_name=_("Notes"),
