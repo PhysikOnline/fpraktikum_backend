@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_yasg',
     'import_export',
+    'gunicorn'
 ]
 
 MIDDLEWARE = [
